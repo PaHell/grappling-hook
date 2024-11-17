@@ -46,9 +46,6 @@ jobs:
         key: sveltekit-npm-${{ hashFiles('**/package-lock.json') }}
         restore-keys: sveltekit-npm-
 
-    - name: Install vite
-      run: bun add -D vite
-
     - name: Install dependencies
       run: bun install --force
 
