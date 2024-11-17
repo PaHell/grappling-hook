@@ -1,0 +1,58 @@
+# This workflow will build a .NET project
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-net
+
+name: "SvelteKit: NPM Build & Publish"
+
+on:
+  push:
+    branches: [ "master" ]
+
+env:
+  appName: ${{ vars.APP_NAME }}
+  copyleft: ${{ vars.COPYLEFT }}
+  databaseFilename: ${{ vars.DATABASE_FILENAME }}
+
+jobs:
+  sveltekit_npm_build_publish:
+
+    runs-on: ubuntu-latest
+    
+    permissions:
+      contents: read
+      packages: write
+
+    defaults:
+      run:
+        working-directory: ./
+
+    env:
+      APP_NAME: $appName
+      APP_COPYLEFT: $copyleft
+      APP_DATABASE_FILENAME: $databaseFilename
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup node
+      uses: actions/setup-node@v3
+      with:
+        node-version: 20.x
+        registry-url: https://npm.pkg.github.com/
+
+    - name: Cache dependencies
+      uses: actions/cache@v3
+      with:
+        path: ~/.npm
+        key: sveltekit-npm-${{ hashFiles('**/package-lock.json') }}
+        restore-keys: sveltekit-npm-
+
+    - name: Install dependencies
+      run: npm install --force
+
+    - name: Build npm package
+      run: npm run build
+
+    - name: Publish npm package
+      run: npm publish
+      env:
+        NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
