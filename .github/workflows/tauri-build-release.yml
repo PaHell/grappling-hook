@@ -38,6 +38,9 @@ jobs:
           bun-version: 1.0.11
           registry-url: https://npm.pkg.github.com/
 
+      - name: Install vite
+        run: bun add -D vite
+
       - name: Install Rust stable
         uses: dtolnay/rust-toolchain@stable
         with:
