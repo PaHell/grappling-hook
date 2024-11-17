@@ -1,5 +1,4 @@
 use tauri::Manager;
-use tauri_plugin_log::{Target, TargetKind};
 use tauri_plugin_sql::{Migration, MigrationKind};
 
 #[cfg(target_os = "macos")]

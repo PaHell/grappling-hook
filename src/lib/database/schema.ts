@@ -7,6 +7,7 @@ export enum TableNames {
 	Games = 'games',
 	Teams = 'teams',
 	Players = 'players',
+	Settings = 'settings',
 }
 
 export const tournaments = sqliteTable(TableNames.Tournaments, {
@@ -34,4 +35,9 @@ export const players = sqliteTable(TableNames.Players, {
 	name: text('name').notNull(),
 	ign: text('ign').unique(),
 	teamId: integer().references((): AnySQLiteColumn => teams.id),
+});
+
+export const settings = sqliteTable(TableNames.Settings, {
+	id: integer('id').primaryKey({ autoIncrement: true }),
+	locale: text('locale'),
 });

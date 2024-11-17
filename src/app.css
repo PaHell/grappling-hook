@@ -1,7 +1,10 @@
+@import url("https://rsms.me/inter/inter.css");
+@import 'remixicon/fonts/remixicon.css';
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
- 
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -79,7 +82,7 @@
   }
   html,
   body {
-    @apply bg-transparent;
+    @apply bg-transparent !important;
   }
   body {
     @apply text-foreground font-sans antialiased;

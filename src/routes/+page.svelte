@@ -26,7 +26,7 @@
 		</a>
 	</div>
 	<p>Click on the Tauri, Vite, and SvelteKit logos to learn more.</p>
-	<a href="/dashboard">
+	<a href="/dashboard/1">
 		<p>Go to dashboard</p>
 	</a>
 	<form class="row" onsubmit={greet}>
