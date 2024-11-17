@@ -1,7 +1,7 @@
 import { defineConfig } from 'drizzle-kit';
 
 export default defineConfig({
-	schema: './src-sveltekit/src/lib/database/schema.ts',
+	schema: './src/lib/database/schema.ts',
 
 	dbCredentials: {
 		url: `:memory:`
@@ -11,4 +11,7 @@ export default defineConfig({
 	strict: true,
 	dialect: 'sqlite',
 	out: "./src-tauri/migrations",
+	migrations: {
+		//table: '__migrations',
+	},
 });
