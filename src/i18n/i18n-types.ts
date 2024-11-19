@@ -14,6 +14,12 @@ export type Translation = RootTranslation
 export type Translations = RootTranslation
 
 type RootTranslation = {
+	general: {
+		/**
+		 * S​e​a​r​c​h
+		 */
+		search: string
+	}
 	enums: {
 		GameResult: {
 			/**
@@ -99,6 +105,12 @@ type RootTranslation = {
 }
 
 export type TranslationFunctions = {
+	general: {
+		/**
+		 * Search
+		 */
+		search: () => LocalizedString
+	}
 	enums: {
 		GameResult: {
 			/**

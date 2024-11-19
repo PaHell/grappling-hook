@@ -26,8 +26,8 @@
 		</a>
 	</div>
 	<p>Click on the Tauri, Vite, and SvelteKit logos to learn more.</p>
-	<a href="/dashboard/1">
-		<p>Go to dashboard</p>
+	<a href="/manage/tournaments/1">
+		<p>Go to Manage</p>
 	</a>
 	<form class="row" onsubmit={greet}>
 		<input id="greet-input" placeholder="Enter a name..." bind:value={name} />
@@ -43,22 +43,6 @@
 
 	.logo.svelte-kit:hover {
 		filter: drop-shadow(0 0 2em #ff3e00);
-	}
-
-	:root {
-		font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
-		font-size: 16px;
-		line-height: 24px;
-		font-weight: 400;
-
-		color: #0f0f0f;
-		background-color: #f6f6f6;
-
-		font-synthesis: none;
-		text-rendering: optimizeLegibility;
-		-webkit-font-smoothing: antialiased;
-		-moz-osx-font-smoothing: grayscale;
-		-webkit-text-size-adjust: 100%;
 	}
 
 	.container {

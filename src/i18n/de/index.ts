@@ -5,6 +5,9 @@ import type { InferSelectModel } from 'drizzle-orm';
 import { GameResult } from '../../lib/database/enums';
 
 const de = {
+	general: {
+		search: 'Suchen',
+	},
 	enums: {
 		GameResult: {
 			label: 'Game Result{{s}}',

@@ -21,10 +21,15 @@ const buttonVariants = tv({
 			lg: "h-10 rounded-md px-8",
 			icon: "h-9 w-9",
 		},
+		active: {
+			true: "bg-red-500",
+			false: ""
+		}
 	},
 	defaultVariants: {
 		variant: "default",
 		size: "default",
+		active: false
 	},
 });
 
@@ -34,6 +39,7 @@ type Size = VariantProps<typeof buttonVariants>["size"];
 type Props = ButtonPrimitive.Props & {
 	variant?: Variant;
 	size?: Size;
+	active?: boolean;
 };
 
 type Events = ButtonPrimitive.Events;

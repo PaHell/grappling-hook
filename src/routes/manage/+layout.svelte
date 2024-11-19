@@ -11,6 +11,8 @@
 	import { TableNames } from '@/database/schema.js';
 	import icons from '@/icons.js';
 	import LL from '../../i18n/i18n-svelte.js';
+	import Navigation from '@/components/Navigation.svelte';
+	import { goto } from '$app/navigation';
 
 	let defaultLayout = [265, 440, 655];
 	let defaultCollapsed = false;
@@ -22,36 +24,40 @@
 		icon: string;
 		title: (ll: TranslationFunctions) => LocalizedString;
 		label?: (ll: TranslationFunctions) => LocalizedString;
-		variant: 'default' | 'outline' | 'secondary';
+		path: string;
 	};
 
 	const sidebarItems: SidebarItem[] = [
 		{
 			title: (ll) => ll.models[TableNames.Tournaments].general.label(999),
 			icon: icons.models.tournament,
-			variant: 'default'
+			path: '/manage/tournaments'
 		},
 		{
 			title: (ll) => ll.models[TableNames.Games].general.label(999),
 			icon: icons.models.game,
-			variant: 'default'
+			path: '/manage/games'
 		},
 		{
 			title: (ll) => ll.models[TableNames.Teams].general.label(999),
 			icon: icons.models.team,
-			variant: 'default'
+			path: '/manage/teams'
 		},
 		{
 			title: (ll) => ll.models[TableNames.Players].general.label(999),
 			icon: icons.models.player,
-			variant: 'default'
+			path: '/manage/players'
 		},
 		{
 			title: (ll) => ll.models[TableNames.Settings].general.label(),
 			icon: icons.models.settings,
-			variant: 'default'
+			path: '/manage/settings'
 		}
 	];
+
+	function onPageChange(item: SidebarItem, index: number) {
+		console.log('Page change', item, index);
+	}
 
 	function onLayoutChange(sizes: number[]) {
 		document.cookie = `PaneForge:layout=${JSON.stringify(sizes)}`;
@@ -95,58 +101,48 @@
 			<nav
 				class="grid gap-1 px-2 group-[[data-collapsed=true]]:justify-center group-[[data-collapsed=true]]:px-2"
 			>
-				{#each sidebarItems as item}
-					{#if isCollapsed}
-						<Tooltip.Root openDelay={0}>
-							<Tooltip.Trigger asChild let:builder>
-								<Button
-									href="#"
-									builders={[builder]}
-									variant={item.variant}
-									size="icon"
-									class={cn(
-										'size-9',
-										item.variant === 'default' &&
-											'dark:bg-muted dark:text-muted-foreground dark:hover:bg-muted dark:hover:text-white'
-									)}
-								>
-									<Icon name={item.icon} class="size-4" />
-									<span>{item.title($LL)}</span>
-								</Button>
-							</Tooltip.Trigger>
-							<Tooltip.Content side="right" class="flex items-center gap-4">
+				<Navigation
+					items={sidebarItems}
+					pathSelector={(i) => i.path}
+					match={2}
+					onchange={onPageChange}
+				>
+					{#snippet children({ item, href, active })}
+						{#if isCollapsed}
+							<Tooltip.Root openDelay={0}>
+								<Tooltip.Trigger asChild let:builder>
+									<Button
+										{href}
+										{active}
+										builders={[builder]}
+										variant="ghost"
+										size="icon"
+										class="size-9"
+									>
+										<Icon name={item.icon} class="size-4" />
+										<span>{item.title($LL)}</span>
+									</Button>
+								</Tooltip.Trigger>
+								<Tooltip.Content side="right" class="flex items-center gap-4">
+									{item.title($LL)}
+									{#if item.label}
+										<span class="text-muted-foreground ml-auto">
+											{item.label($LL)}
+										</span>
+									{/if}
+								</Tooltip.Content>
+							</Tooltip.Root>
+						{:else}
+							<Button {href} {active} variant="ghost" class="w-full justify-start">
+								<Icon name={item.icon} class="mr-2 size-4" />
 								{item.title($LL)}
 								{#if item.label}
-									<span class="text-muted-foreground ml-auto">
-										{item.label($LL)}
-									</span>
+									<span>{item.label($LL)}</span>
 								{/if}
-							</Tooltip.Content>
-						</Tooltip.Root>
-					{:else}
-						<Button
-							href="#"
-							variant={item.variant}
-							size="sm"
-							class={cn('justify-start', {
-								'dark:bg-muted dark:hover:bg-muted dark:text-white dark:hover:text-white':
-									item.variant === 'default'
-							})}
-						>
-							<Icon name={item.icon} class="mr-2 size-4" />
-							{item.title($LL)}
-							{#if item.label}
-								<span
-									class={cn('ml-auto', {
-										'text-background dark:text-white': item.variant === 'default'
-									})}
-								>
-									{item.label($LL)}
-								</span>
-							{/if}
-						</Button>
-					{/if}
-				{/each}
+							</Button>
+						{/if}
+					{/snippet}
+				</Navigation>
 			</nav>
 		</div>
 	</Resizable.Pane>

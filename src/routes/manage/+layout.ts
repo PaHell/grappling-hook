@@ -1,6 +1,6 @@
-import type { PageLoad } from "./$types";
+import type { LayoutLoad } from "./$types";
 
-export const load: PageLoad = async (event) => {
+export const load: LayoutLoad = async (event) => {
       const layoutCookie = localStorage.getItem("PaneForge:layout");
       const collapsedCookie = localStorage.getItem("PaneForge:collapsed");
 

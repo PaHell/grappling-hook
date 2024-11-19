@@ -77,7 +77,7 @@
   }
   html,
   body,
-  body > div {
+  body > #content {
     @apply h-screen w-full;
   }
   html,
