@@ -8,6 +8,14 @@ const en = {
 	general: {
 		search: 'Search',
 	},
+	crud: {
+		delete: {
+			deleteModel: 'Delete {model}?',
+			areYouSure: 'Are you sure you want to delete "{item}"?',
+			delete: 'Delete',
+			keep: 'Keep',
+		}
+	},
 	enums: {
 		GameResult: {
 			label: 'Game Result{{s}}',

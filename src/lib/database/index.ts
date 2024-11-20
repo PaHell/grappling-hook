@@ -25,19 +25,36 @@ export const db = drizzle<typeof schema>(
             let rows: any = [];
             let results = [];
 
+            console.log("Executing SQL:", sql, "Params:", params);
+            console.log("Query Method:", method);
             // If the query is a SELECT, use the select method
             if (isSelectQuery(sql)) {
                   rows = await sqlite.select(sql, params).catch((e) => {
                         console.error("SQL Error:", e);
                         return [];
                   });
+                  console.log("Select Rows:", rows);
+
             } else {
-                  // Otherwise, use the execute method
-                  rows = await sqlite.execute(sql, params).catch((e) => {
-                        console.error("SQL Error:", e);
-                        return [];
-                  });
-                  return { rows: [] };
+                  // Check if the query contains a RETURNING clause
+                  const isReturning = /\bRETURNING\b/i.test(sql);
+                  if (isReturning) {
+                        const tableName = sql.match(/INSERT\s+INTO\s+"([\w-]+)"/i)![1];
+                        // Execute the INSERT query without RETURNING
+                        const result = await sqlite.execute(
+                              sql,
+                              params
+                        );
+                        // Fetch the inserted rows manually using SELECT
+                        rows = await sqlite.select(
+                              `SELECT * FROM ${tableName} WHERE id = $1`,
+                              [result.lastInsertId]
+                        );
+                  } else {
+                        // Standard non-returning execute
+                        const result = await sqlite.execute(sql, params);
+                        return { rows: result.rowsAffected ? [{ rowsAffected: result.rowsAffected }] : [] };
+                  }
             }
 
             rows = rows.map((row: any) => {

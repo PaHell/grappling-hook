@@ -8,19 +8,27 @@ const de = {
 	general: {
 		search: 'Suchen',
 	},
+	crud: {
+		delete: {
+			deleteModel: '{model} löschen?',
+			areYouSure: 'Sind Sie sicher, dass Sie "{item}" löschen möchten?',
+			delete: 'Löschen',
+			keep: 'Behalten',
+		}
+	},
 	enums: {
 		GameResult: {
-			label: 'Game Result{{s}}',
-			[GameResult.NotDecided]: 'Not Decided',
-			[GameResult.Red]: 'Red',
-			[GameResult.Blue]: 'Blue',
+			label: 'Spiel Ergebnis{{se}}',
+			[GameResult.NotDecided]: 'Nicht entschieden',
+			[GameResult.Red]: 'Rot',
+			[GameResult.Blue]: 'Blau',
 		} satisfies EnumTranslation<GameResult>
 	},
 	models: {
 		[TableNames.Tournaments]: {
 			general: {
-				label: 'Tournament{{s}}',
-				none: 'No tournament{{s}}',
+				label: 'Turnier{{e}}',
+				none: 'Keine Turniere',
 			}
 		} satisfies ModelTranslation<InferSelectModel<typeof tournaments>>,
 		[TableNames.Teams]: {
@@ -31,20 +39,20 @@ const de = {
 		} satisfies ModelTranslation<InferSelectModel<typeof teams>>,
 		[TableNames.Games]: {
 			general: {
-				label: 'Game{{s}}',
-				none: 'No game{{s}}',
+				label: 'Spiel{{e}}',
+				none: 'Keine Spiele',
 			}
 		} satisfies ModelTranslation<InferSelectModel<typeof games>>,
 		[TableNames.Players]: {
 			general: {
-				label: 'Player{{s}}',
-				none: 'No player{{s}}',
+				label: 'Spieler',
+				none: 'Keine Spieler',
 			}
 		} satisfies ModelTranslation<InferSelectModel<typeof players>>,
 		[TableNames.Settings]: {
 			general: {
-				label: 'Settings',
-				none: 'No settings.',
+				label: 'Einstellungen',
+				none: 'Keine Einstellungen',
 			}
 		} satisfies ModelTranslation<InferSelectModel<typeof players>>
 	}

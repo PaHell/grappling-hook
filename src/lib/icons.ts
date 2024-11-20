@@ -2,6 +2,7 @@ export default {
       app: "appstore-line",
       controls: {
             add: "add-line",
+            delete: "delete-bin-line",
             search: "search-line",
       },
       models: {

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { Tabs as TabsPrimitive } from 'bits-ui';
 	import { cn } from '$lib/utils.js';
+	import { setContext } from 'svelte';
 
 	type $$Props = TabsPrimitive.ListProps;
 
@@ -9,10 +10,8 @@
 </script>
 
 <TabsPrimitive.List
-	class={cn(
-		'bg-white/5 text-muted-foreground inline-flex h-10 items-center rounded justify-center p-1',
-		className
-	)}
+	on:change={(e) => console.log(e)}
+	class={cn('text-muted-foreground inline-flex items-center rounded justify-center', className)}
 	{...$$restProps}
 >
 	<slot />

@@ -5,7 +5,6 @@
 	import Icon from '@/components/ui/icon/Icon.svelte';
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 	import { DateFormatter, getDayOfWeek, getLocalTimeZone, now } from '@internationalized/date';
-	import type { Mail } from '../data.js';
 	import * as Avatar from '$lib/components/ui/avatar/index.js';
 	import { Button, buttonVariants } from '$lib/components/ui/button/index.js';
 	import { Calendar } from '$lib/components/ui/calendar/index.js';
@@ -14,30 +13,14 @@
 	import * as Popover from '$lib/components/ui/popover/index.js';
 	import { Switch } from '$lib/components/ui/switch/index.js';
 	import { Textarea } from '$lib/components/ui/textarea/index.js';
+	import time from '@/time';
+	import icons from '@/icons';
+	import { tournaments } from '@/database/schema';
 
-	let mail: Mail | null = null;
+	let { data } = $props();
 	let defaultLayout = [265, 440, 655];
 
-	const fullFormatter = new DateFormatter('en-US', {
-		dateStyle: 'medium',
-		timeStyle: 'medium'
-	});
-
-	const relativeFormatter = new DateFormatter('en-US', {
-		weekday: 'short',
-		hour: '2-digit',
-		minute: '2-digit',
-		hourCycle: 'h12'
-	});
-	let todayDate = now(getLocalTimeZone());
-
-	function getClosestWeekend() {
-		const dayOfWeek = getDayOfWeek(todayDate, 'en-US');
-		if (dayOfWeek === 6) {
-			return todayDate.toDate();
-		}
-		return todayDate.add({ days: 6 - dayOfWeek }).toDate();
-	}
+	let todayDate = $state(now(getLocalTimeZone()));
 </script>
 
 <Resizable.Pane defaultSize={defaultLayout[2]}>
@@ -48,9 +31,8 @@
 					<Tooltip.Trigger
 						id="archive_tooltip"
 						class={buttonVariants({ variant: 'ghost', size: 'icon' })}
-						disabled={!mail}
 					>
-						<Icon name="archive" class="size-4" />
+						<Icon name={icons.controls.delete} class="size-4" />
 						<span class="sr-only">Archive</span>
 					</Tooltip.Trigger>
 					<Tooltip.Content>Archive</Tooltip.Content>
@@ -59,9 +41,8 @@
 					<Tooltip.Trigger
 						id="move_to_junk_tooltip"
 						class={buttonVariants({ variant: 'ghost', size: 'icon' })}
-						disabled={!mail}
 					>
-						<Icon name="archiveX" class="size-4" />
+						<Icon name={icons.controls.delete} class="size-4" />
 						<span class="sr-only">Move to junk</span>
 					</Tooltip.Trigger>
 					<Tooltip.Content>Move to junk</Tooltip.Content>
@@ -70,9 +51,8 @@
 					<Tooltip.Trigger
 						id="move_to_trash_tooltip"
 						class={buttonVariants({ variant: 'ghost', size: 'icon' })}
-						disabled={!mail}
 					>
-						<Icon name="trash2" class="size-4" />
+						<Icon name={icons.controls.delete} class="size-4" />
 						<span class="sr-only">Move to trash</span>
 					</Tooltip.Trigger>
 					<Tooltip.Content>Move to trash</Tooltip.Content>
@@ -82,13 +62,8 @@
 					<Popover.Root portal={null}>
 						<Tooltip.Trigger asChild let:builder={tooltip_builder} id="snooze_popover">
 							<Popover.Trigger asChild let:builder={popover_builder} id="snooze_popover">
-								<Button
-									builders={[tooltip_builder, popover_builder]}
-									variant="ghost"
-									size="icon"
-									disabled={!mail}
-								>
-									<Icon name="clock" class="size-4" />
+								<Button builders={[tooltip_builder, popover_builder]} variant="ghost" size="icon">
+									<Icon name={icons.controls.delete} class="size-4" />
 									<span class="sr-only">Snooze</span>
 								</Button>
 							</Popover.Trigger>
@@ -100,25 +75,25 @@
 									<Button variant="ghost" class="justify-start font-normal">
 										Later today
 										<span class="text-muted-foreground ml-auto">
-											{relativeFormatter.format(todayDate.add({ hours: 4 }).toDate())}
+											{1}
 										</span>
 									</Button>
 									<Button variant="ghost" class="justify-start font-normal">
 										Tomorrow
 										<span class="text-muted-foreground ml-auto">
-											{relativeFormatter.format(todayDate.add({ days: 1 }).toDate())}
+											{1}
 										</span>
 									</Button>
 									<Button variant="ghost" class="justify-start font-normal">
 										This weekend
 										<span class="text-muted-foreground ml-auto">
-											{relativeFormatter.format(getClosestWeekend())}
+											{1}
 										</span>
 									</Button>
 									<Button variant="ghost" class="justify-start font-normal">
 										Next week
 										<span class="text-muted-foreground ml-auto">
-											{relativeFormatter.format(todayDate.add({ weeks: 1 }).toDate())}
+											{1}
 										</span>
 									</Button>
 								</div>
@@ -136,9 +111,8 @@
 					<Tooltip.Trigger
 						id="reply_tooltip"
 						class={buttonVariants({ variant: 'ghost', size: 'icon' })}
-						disabled={!mail}
 					>
-						<Icon name="Reply" class="size-4" />
+						<Icon name={icons.controls.delete} class="size-4" />
 						<span class="sr-only">Reply</span>
 					</Tooltip.Trigger>
 					<Tooltip.Content>Reply</Tooltip.Content>
@@ -147,9 +121,8 @@
 					<Tooltip.Trigger
 						id="reply_all_tooltip"
 						class={buttonVariants({ variant: 'ghost', size: 'icon' })}
-						disabled={!mail}
 					>
-						<Icon name="ReplyAll" class="size-4" />
+						<Icon name={icons.controls.delete} class="size-4" />
 						<span class="sr-only">Reply all</span>
 					</Tooltip.Trigger>
 					<Tooltip.Content>Reply all</Tooltip.Content>
@@ -158,9 +131,8 @@
 					<Tooltip.Trigger
 						id="forward_tooltip"
 						class={buttonVariants({ variant: 'ghost', size: 'icon' })}
-						disabled={!mail}
 					>
-						<Icon name="Forward" class="size-4" />
+						<Icon name={icons.controls.delete} class="size-4" />
 						<span class="sr-only">Forward</span>
 					</Tooltip.Trigger>
 					<Tooltip.Content>Forward</Tooltip.Content>
@@ -171,9 +143,8 @@
 				<DropdownMenu.Trigger
 					id="more_options_dropdown"
 					class={buttonVariants({ variant: 'ghost', size: 'icon' })}
-					disabled={!mail}
 				>
-					<Icon name="EllipsisVertical" class="size-4" />
+					<Icon name={icons.controls.delete} class="size-4" />
 					<span class="sr-only">More</span>
 				</DropdownMenu.Trigger>
 				<DropdownMenu.Content align="end">
@@ -185,43 +156,36 @@
 			</DropdownMenu.Root>
 		</div>
 		<Separator />
-		{#if mail}
+		{#if data.tournament}
 			<div class="flex h-full flex-1 flex-col overflow-hidden">
 				<div class="flex items-start p-4">
 					<div class="flex items-start gap-4 text-sm">
 						<Avatar.Root>
-							<Avatar.Image alt={mail.name} />
+							<Avatar.Image alt={data.tournament.id.toString().padStart(0, '0')} />
 							<Avatar.Fallback>
-								{mail.name
-									.split(' ')
-									.map((chunk) => chunk[0])
-									.join('')}
+								{data.tournament.id.toString().padStart(0, '0')}
 							</Avatar.Fallback>
 						</Avatar.Root>
 						<div class="grid gap-1">
-							<div class="font-semibold">{mail.name}</div>
-							<div class="line-clamp-1 text-xs">{mail.subject}</div>
-							<div class="line-clamp-1 text-xs">
-								<span class="font-medium">Reply-To:</span>
-								{mail.email}
-							</div>
+							<div class="font-semibold">NAME: {data.tournament.name}</div>
+							<div class="line-clamp-1 text-xs">ID: {data.tournament.id}</div>
 						</div>
 					</div>
-					{#if mail.date}
+					{#if data.tournament.dateOfMatch}
 						<div class="text-muted-foreground ml-auto text-xs">
-							{fullFormatter.format(new Date(mail.date))}
+							{$time(data.tournament.dateOfMatch.toUTCString()).fromNow()}
 						</div>
 					{/if}
 				</div>
 				<Separator />
 				<div class="flex-1 overflow-y-auto whitespace-pre-wrap p-4 text-sm">
-					{mail.text}
+					{data.tournament.dateOfMatch}
 				</div>
 				<Separator class="mt-auto" />
-				<div class="p-4">
+				<div class="p-4 hidden">
 					<form>
 						<div class="grid gap-4">
-							<Textarea class="p-4" placeholder={`Reply ${mail.name}...`} />
+							<Textarea class="p-4" placeholder={`Reply ${data.tournament.name}...`} />
 							<div class="flex items-center">
 								<Label for="mute" class="flex items-center gap-2 text-xs font-normal">
 									<Switch id="mute" aria-label="Mute thread" /> Mute this thread
@@ -232,8 +196,6 @@
 					</form>
 				</div>
 			</div>
-		{:else}
-			<div class="text-muted-foreground p-8 text-center">No message selected</div>
 		{/if}
 	</div>
 </Resizable.Pane>

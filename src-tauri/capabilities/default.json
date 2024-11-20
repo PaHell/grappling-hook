@@ -11,6 +11,8 @@
     "fs:default",
     "fs:allow-appdata-read",
     "fs:allow-appdata-write",
+    "core:window:allow-create",
+    "core:window:allow-center",
     {
       "identifier": "fs:scope",
       "allow": [
@@ -24,6 +26,7 @@
     },
     "sql:default",
     "sql:allow-execute",
-    "log:default"
+    "log:default",
+    "dialog:default"
   ]
 }

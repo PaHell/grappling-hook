@@ -26,7 +26,7 @@
 		</a>
 	</div>
 	<p>Click on the Tauri, Vite, and SvelteKit logos to learn more.</p>
-	<a href="/manage/tournaments/1">
+	<a href="/manage/tournaments">
 		<p>Go to Manage</p>
 	</a>
 	<form class="row" onsubmit={greet}>

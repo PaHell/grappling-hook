@@ -1,9 +1,11 @@
 <script lang="ts" module>
 	import { browser } from '$app/environment';
 	import { afterNavigate } from '$app/navigation';
+	import { page } from '$app/stores';
 	import type { Snippet } from 'svelte';
 
-	export function matchPath(path: string, current: string, match: number): boolean {
+	export function matchPath(_path: string, current: string, match: number): boolean {
+		const [path] = _path.split('?');
 		if (match == 0) return path === current;
 		const currSplit = current.split('/');
 		const pathSplit = path.split('/');
@@ -21,7 +23,7 @@
 		pathSelector,
 		match = 0,
 		active = $bindable(-1),
-		classes = '',
+		class: classes = '',
 		onchange,
 		children
 	}: {
@@ -29,7 +31,7 @@
 		pathSelector: (item: T) => string;
 		match?: number;
 		active?: number;
-		classes?: string;
+		class?: string;
 		onchange?: (item: T, index: number) => void;
 		children: Snippet<
 			[
@@ -43,6 +45,7 @@
 	} = $props();
 
 	let paths: string[] = $derived(items.map(pathSelector));
+	let queryParams: string = $derived($page.url.searchParams.toString());
 	$effect(onNavigate);
 	let currentPath = '';
 
@@ -57,8 +60,8 @@
 </script>
 
 <div class="navigation {classes}">
-	{#each items as item, i}
-		{@render children({ item, active: i == active, href: paths[i] })}
+	{#each items as item, i (i)}
+		{@render children({ item, active: i == active, href: paths[i] + '?' + queryParams })}
 	{/each}
 </div>
 

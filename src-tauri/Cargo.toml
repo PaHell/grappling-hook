@@ -27,4 +27,5 @@ tauri-plugin-sql = { version = "2", features = ["sqlite"] }
 window-vibrancy = "0.5.2"
 tauri-plugin-log = "2"
 windows-version = "0.1.1"
+tauri-plugin-dialog = "2"
 
