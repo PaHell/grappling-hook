@@ -1,12 +1,6 @@
 use tauri::Manager;
 use tauri_plugin_sql::{Migration, MigrationKind};
 
-#[cfg(target_os = "macos")]
-use window_vibrancy::{apply_vibrancy, NSVisualEffectMaterial};
-
-#[cfg(target_os = "windows")]
-use window_vibrancy::{apply_acrylic, apply_blur, apply_mica};
-
 // Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 #[tauri::command]
 fn greet(name: &str) -> String {
@@ -36,26 +30,7 @@ pub fn run() {
         .plugin(tauri_plugin_shell::init())
         .invoke_handler(tauri::generate_handler![greet])
         .setup(|app| {
-            let window = app.get_webview_window("main").unwrap();
-            #[cfg(target_os = "macos")]
-            {
-                apply_vibrancy(&window, NSVisualEffectMaterial::HudWindow, None, None)
-                    .expect("Unsupported platform! 'apply_vibrancy' is only supported on macOS");
-            }
-            #[cfg(target_os = "windows")]
-            {
-                let version = windows_version::OsVersion::current();
-
-                if version.major > 10 || (version.major == 10 && version.build >= 22000) {
-                    // This is Windows 11 or newer
-                    apply_mica(&window, None).expect("Failed to apply mica effect");
-                } else if version.major == 10 {
-                    // This is Windows 10
-                    apply_acrylic(&window, None).expect("Failed to apply blur effect");
-                } else {
-                    apply_blur(&window, None).expect("Failed to apply blur effect");
-                }
-            }
+            let _window = app.get_webview_window("main").unwrap();
             Ok(())
         })
         .run(tauri::generate_context!())

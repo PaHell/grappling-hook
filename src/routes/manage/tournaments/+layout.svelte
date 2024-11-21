@@ -27,6 +27,7 @@
 	import SearchParamsNavigation from '@/components/SearchParamsNavigation.svelte';
 	import { goto } from '$app/navigation';
 	import { TournamentFilter } from './index.js';
+	import { createWindow } from '@/window.js';
 
 	type Tournament = InferSelectModel<typeof _tournaments>;
 
@@ -71,6 +72,10 @@
 	}
 
 	async function askDelete(tournament: Tournament) {
+		const appWindow = createWindow('DeleteTournament', true, {});
+		const appWindow2 = createWindow('DeleteTournament2', false, {});
+
+		return;
 		error = null;
 		const ll = get(LL);
 		try {

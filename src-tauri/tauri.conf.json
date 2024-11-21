@@ -19,7 +19,10 @@
         "height": 896,
         "resizable": true,
         "fullscreen": false,
-        "transparent": true
+        "transparent": true,
+        "windowEffects": {
+          "effects": ["mica", "acrylic", "blur", "windowBackground"]
+        }
       }
     ],
     "security": {
