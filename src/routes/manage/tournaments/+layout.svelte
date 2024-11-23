@@ -27,7 +27,8 @@
 	import SearchParamsNavigation from '@/components/SearchParamsNavigation.svelte';
 	import { goto } from '$app/navigation';
 	import { TournamentFilter } from './index.js';
-	import { createWindow } from '@/window.js';
+	import { createDialog, createWindow } from '@/window.js';
+	import { window } from '@tauri-apps/api';
 
 	type Tournament = InferSelectModel<typeof _tournaments>;
 
@@ -72,16 +73,18 @@
 	}
 
 	async function askDelete(tournament: Tournament) {
-		const appWindow = createWindow('DeleteTournament', true, {});
-		const appWindow2 = createWindow('DeleteTournament2', false, {});
-
-		return;
 		error = null;
-		const ll = get(LL);
 		try {
-			const confirmed = await ask(ll.crud.delete.areYouSure({ item: tournament.name }), {
-				title: ll.crud.delete.deleteModel({ model: ll.models.tournaments.general.label(1) }),
-				kind: 'warning'
+			const item = tournament.name;
+			const model = $LL.models[TableNames.Tournaments].general.label(1);
+			const confirmed = await createDialog({
+				title: $LL.crud.delete.deleteModelItem({ model, item }),
+				headline: $LL.crud.delete.areYouSure({ item }),
+				detail: $LL.crud.delete.lostForeverCannotBeUndone(),
+				confirm: $LL.crud.delete.deleteModel({
+					model
+				}),
+				deny: $LL.crud.delete.keep()
 			});
 			if (!confirmed) return;
 			await db.delete(_tournaments).where(eq(_tournaments.id, tournament.id));

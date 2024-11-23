@@ -1,4 +1,3 @@
-import { migrate } from '$lib/database/migrate';
 import type { LayoutLoad } from './$types';
 import { browser } from "$app/environment";
 import { setLocale } from "$i18n/i18n-svelte";
@@ -19,10 +18,5 @@ export const load: LayoutLoad = async () => {
       const locale = locales.find((l) => userLocale?.includes(l)) ?? locales[0];
       await loadLocaleAsync(locale);
       setLocale(locale);
-      try {
-            await migrate();
-      } catch (error) {
-            console.error(error);
-      }
       return {};
 };

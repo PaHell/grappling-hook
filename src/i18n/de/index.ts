@@ -10,9 +10,10 @@ const de = {
 	},
 	crud: {
 		delete: {
-			deleteModel: '{model} löschen?',
-			areYouSure: 'Sind Sie sicher, dass Sie "{item}" löschen möchten?',
-			delete: 'Löschen',
+			deleteModelItem: '{model} \"{item}\" löschen?',
+			areYouSure: 'Möchten Sie \"{item}\" wirklich löschen?',
+			lostForeverCannotBeUndone: 'Diese Aktion kann nicht rückgängig gemacht werden und das Element geht für immer verloren (Eine sehr lange Zeit).',
+			deleteModel: '{model} löschen',
 			keep: 'Behalten',
 		}
 	},

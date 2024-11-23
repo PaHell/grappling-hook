@@ -23,19 +23,25 @@ type RootTranslation = {
 	crud: {
 		'delete': {
 			/**
-			 * D​e​l​e​t​e​ ​{​m​o​d​e​l​}​?
+			 * D​e​l​e​t​e​ ​{​m​o​d​e​l​}​ ​"​{​i​t​e​m​}​"​?
+			 * @param {unknown} item
 			 * @param {unknown} model
 			 */
-			deleteModel: RequiredParams<'model'>
+			deleteModelItem: RequiredParams<'item' | 'model'>
 			/**
 			 * A​r​e​ ​y​o​u​ ​s​u​r​e​ ​y​o​u​ ​w​a​n​t​ ​t​o​ ​d​e​l​e​t​e​ ​"​{​i​t​e​m​}​"​?
 			 * @param {unknown} item
 			 */
 			areYouSure: RequiredParams<'item'>
 			/**
-			 * D​e​l​e​t​e
+			 * T​h​i​s​ ​a​c​t​i​o​n​ ​c​a​n​n​o​t​ ​b​e​ ​u​n​d​o​n​e​ ​a​n​d​ ​t​h​e​ ​i​t​e​m​ ​w​i​l​l​ ​b​e​ ​l​o​s​t​ ​f​o​r​e​v​e​r​ ​(​a​ ​v​e​r​y​ ​l​o​n​g​ ​t​i​m​e​)​.
 			 */
-			'delete': string
+			lostForeverCannotBeUndone: string
+			/**
+			 * D​e​l​e​t​e​ ​{​m​o​d​e​l​}
+			 * @param {unknown} model
+			 */
+			deleteModel: RequiredParams<'model'>
 			/**
 			 * K​e​e​p
 			 */
@@ -136,17 +142,21 @@ export type TranslationFunctions = {
 	crud: {
 		'delete': {
 			/**
-			 * Delete {model}?
+			 * Delete {model} "{item}"?
 			 */
-			deleteModel: (arg: { model: unknown }) => LocalizedString
+			deleteModelItem: (arg: { item: unknown, model: unknown }) => LocalizedString
 			/**
 			 * Are you sure you want to delete "{item}"?
 			 */
 			areYouSure: (arg: { item: unknown }) => LocalizedString
 			/**
-			 * Delete
+			 * This action cannot be undone and the item will be lost forever (a very long time).
 			 */
-			'delete': () => LocalizedString
+			lostForeverCannotBeUndone: () => LocalizedString
+			/**
+			 * Delete {model}
+			 */
+			deleteModel: (arg: { model: unknown }) => LocalizedString
 			/**
 			 * Keep
 			 */

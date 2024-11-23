@@ -10,9 +10,10 @@ const en = {
 	},
 	crud: {
 		delete: {
-			deleteModel: 'Delete {model}?',
+			deleteModelItem: 'Delete {model} \"{item}\"?',
 			areYouSure: 'Are you sure you want to delete "{item}"?',
-			delete: 'Delete',
+			lostForeverCannotBeUndone: 'This action cannot be undone and the item will be lost forever (a very long time).',
+			deleteModel: 'Delete {model}',
 			keep: 'Keep',
 		}
 	},

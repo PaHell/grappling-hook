@@ -3,7 +3,8 @@
   "identifier": "default",
   "description": "Capability for the main window",
   "windows": [
-    "main"
+    "main",
+    "dialog"
   ],
   "permissions": [
     "core:default",
@@ -13,6 +14,11 @@
     "fs:allow-appdata-write",
     "core:window:allow-create",
     "core:window:allow-center",
+    "core:webview:allow-create-webview",
+    "core:webview:allow-create-webview-window",
+    "core:event:allow-emit",
+    "core:window:allow-close",
+    "core:webview:allow-webview-close",
     {
       "identifier": "fs:scope",
       "allow": [

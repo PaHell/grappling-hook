@@ -1,6 +1,12 @@
+import { migrate } from "@/database/migrate";
 import type { LayoutLoad } from "./$types";
 
 export const load: LayoutLoad = async (event) => {
+      try {
+            await migrate();
+      } catch (error) {
+            console.error(error);
+      }
       const layoutCookie = localStorage.getItem("PaneForge:layout");
       const collapsedCookie = localStorage.getItem("PaneForge:collapsed");
 
