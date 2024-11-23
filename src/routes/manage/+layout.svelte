@@ -13,6 +13,10 @@
 	import LL from '../../i18n/i18n-svelte.js';
 	import Navigation from '@/components/Navigation.svelte';
 	import { goto } from '$app/navigation';
+	import { createWindow } from '@/window';
+	import { getAllWebviews } from '@tauri-apps/api/webview';
+	import { onMount } from 'svelte';
+	import type { WebviewWindow } from '@tauri-apps/api/webviewWindow';
 
 	let defaultLayout = [265, 440, 655];
 	let defaultCollapsed = false;
@@ -54,6 +58,17 @@
 			path: '/manage/settings'
 		}
 	];
+
+	const _windowLabel = 'championSelect';
+	let championSelect: WebviewWindow | undefined;
+	onMount(async () => {
+		championSelect = (await getAllWebviews()).find((wv) => wv.label === _windowLabel) as
+			| WebviewWindow
+			| undefined;
+		championSelect ??= await createWindow(_windowLabel, false, {
+			url: '/champion-select'
+		});
+	});
 
 	function onPageChange(item: SidebarItem, index: number) {
 		console.log('Page change', item, index);

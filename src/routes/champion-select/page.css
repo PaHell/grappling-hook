@@ -1,0 +1,46 @@
+#champion-select {
+      @apply w-screen h-screen grid grid-cols-[1fr_auto_1fr] grid-rows-[1fr_2fr_2fr_2fr_2fr_2fr] gap-6 bg-black text-white;
+      grid-template-areas:
+            "bans0   timer  bans1"
+            "player0 splash player5"
+            "player1 splash player6"
+            "player2 splash player7"
+            "player3 splash player8"
+            "player4 splash player9";
+
+      & > .bans {
+            @apply flex gap-x-4;
+            &:nth-child(3) {
+                  @apply justify-end;
+            }
+            & > div {
+                  @apply h-full aspect-square bg-blue-500;
+            }
+      }
+      & > .timer {
+            @apply w-48 h-full bg-gray-500;
+      }
+      & > .player {
+            @apply flex gap-x-4 bg-red-500;
+            /* make every 2nd reverse layout*/
+            &:nth-child(1n+10) {
+                  @apply flex-row-reverse;
+            }
+            & > .summoners {
+                  @apply grid grid-rows-2 gap-y-4;
+                  & > .summoner {
+                        @apply aspect-square bg-yellow-400;
+                  }
+            }
+            & > .champion {
+                  @apply h-full aspect-square bg-teal-500;
+            }
+            & > .details {
+                  @apply h-full flex-1 bg-purple-500;
+            }
+      }
+      & > .splash {
+            @apply bg-green-500;
+      }
+
+}
