@@ -1,0 +1,12 @@
+            #champion-select > .bans > .ban {
+                  @apply aspect-square border-2 flex items-center justify-center;
+                  &.ban-idle {
+                        @apply border-gray-700 text-gray-700;
+                  }
+                  &.ban-active {
+                        @apply border-yellow-400 text-white;
+                  }
+                  &.ban-selected {
+                        @apply border-red-500 text-red-500;
+                  }
+            }

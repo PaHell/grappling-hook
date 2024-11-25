@@ -1,5 +1,5 @@
 export default {
-      app: "appstore-line",
+      app: "arrow-go-back-line",
       controls: {
             add: "add-line",
             delete: "delete-bin-line",

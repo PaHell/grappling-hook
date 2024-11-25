@@ -1,0 +1,18 @@
+            #champion-select .champion {
+                  @apply border-4 rounded-full flex items-center justify-center;
+                  & > div {
+                        @apply w-full h-full flex items-center justify-center bg-gray-950 rounded-full;
+                        & > .icon {
+                              @apply w-[3rem] text-[3rem] leading-[3rem];
+                        }
+                  }
+                  &.pick-idle {
+                        @apply border-gray-600 text-gray-600;
+                  }
+                  &.pick-active {
+                        @apply border-white text-white;
+                  }
+                  &.pick-locked {
+                        @apply border-yellow-400 text-yellow-400;
+                  }
+            }

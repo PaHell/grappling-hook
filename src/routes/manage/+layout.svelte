@@ -17,6 +17,13 @@
 	import { getAllWebviews } from '@tauri-apps/api/webview';
 	import { onMount } from 'svelte';
 	import type { WebviewWindow } from '@tauri-apps/api/webviewWindow';
+	import {
+		listenReady,
+		setBranding,
+		setCurrentAction,
+		setTeams,
+		setTimer
+	} from '../champion-select';
 
 	let defaultLayout = [265, 440, 655];
 	let defaultCollapsed = false;
@@ -66,9 +73,42 @@
 			| WebviewWindow
 			| undefined;
 		championSelect ??= await createWindow(_windowLabel, false, {
-			url: '/champion-select'
+			url: '/champion-select',
+			title: $LL.routes.championSelect.title()
+		});
+		await listenReady(async () => {
+			console.log('Champion select ready');
+			await setupChampionSelect();
 		});
 	});
+
+	async function setupChampionSelect() {
+		await setBranding({
+			logo: 'https://tailwindcss.com/_next/static/media/tailwindcss-mark.3c5441fc7a190fb1800d4a5c7f07ba4b1345a9c8.svg',
+			headline: 'redesiigner',
+			subtitle: 'Winter Tournament 2024'
+		});
+		await setTimer(60);
+		await setCurrentAction('Player 1 is picking');
+		await setTeams(0, {
+			img: 'https://upload.wikimedia.org/wikipedia/en/thumb/4/43/Esports_organization_Fnatic_logo.svg/1200px-Esports_organization_Fnatic_logo.svg.png',
+			name: 'Red Team',
+			score: 3,
+			players: [{ name: 'Player 1' }, { name: 'Player 2' }, { name: 'Player 3' }]
+		});
+		await setTeams(1, {
+			img: 'https://upload.wikimedia.org/wikipedia/de/0/05/SK_Telecom_T1.png',
+			name: 'Blue Team',
+			score: 2,
+			players: [
+				{ name: 'Player 6' },
+				{ name: 'Player 7' },
+				{ name: 'Player 8' },
+				{ name: 'Player 9' },
+				{ name: 'Player 10' }
+			]
+		});
+	}
 
 	function onPageChange(item: SidebarItem, index: number) {
 		console.log('Page change', item, index);
@@ -105,8 +145,8 @@
 				isCollapsed ? 'h-[52px]' : 'px-2'
 			)}
 		>
-			<Icon name="logo" class="size-5" />
-			<h5 class="font-medium">{APP_NAME}</h5>
+			<Icon name={icons.app} />
+			<h5 class="font-branding text-xl h-7">{APP_NAME}</h5>
 		</div>
 		<Separator />
 		<div
@@ -158,6 +198,10 @@
 						{/if}
 					{/snippet}
 				</Navigation>
+				<Button onclick={setupChampionSelect} size="lg" class="w-full justify-start">
+					<Icon name={icons.controls.add} class="mr-2 size-4" />
+					<p>Send Data</p>
+				</Button>
 			</nav>
 		</div>
 	</Resizable.Pane>

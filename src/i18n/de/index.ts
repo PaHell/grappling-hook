@@ -56,6 +56,11 @@ const de = {
 				none: 'Keine Einstellungen',
 			}
 		} satisfies ModelTranslation<InferSelectModel<typeof players>>
+	},
+	routes: {
+		championSelect: {
+			title: 'Meisterauswahl',
+		},
 	}
 } satisfies Translation
 

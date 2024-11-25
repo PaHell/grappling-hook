@@ -1,0 +1,18 @@
+#champion-select > .team {
+      @apply items-center gap-x-[min(1.5vw,1.5vh)];
+      & > img {
+            @apply h-full py-[min(1vw,1vh)];
+      }
+      & > div {
+            @apply flex-1 flex flex-wrap gap-x-[min(.5vw,.5vh)];
+            & > .text {
+                  @apply flex-[0_0_100%] mb-1 text-[min(3vw,3vh)] leading-none;
+            }
+            & > div {
+                  @apply w-2 h-2 bg-white rounded-full;
+                  &:first-of-type {
+                        @apply ms-[min(.1vw,.1vh)];
+                  }
+            }
+      }
+}

@@ -11,6 +11,26 @@
   "permissions": [
     "core:default",
     "shell:allow-open",
+    {
+      "identifier": "shell:allow-execute",
+      "allow": [
+        {
+          "name": "win-get-leagueclientux",
+          "cmd": "powershell",
+          "args": [
+            "Get-CimInstance -Query \"SELECT * from Win32_Process WHERE name LIKE 'LeagueClientUx.exe'\" | Select-Object -ExpandProperty CommandLine"
+          ]
+        },
+        {
+          "name": "linux-get-leagueclientux",
+          "cmd": "bash",
+          "args": [
+            "ps x -o args | grep 'LeagueClientUx'"
+          ]
+        }
+      ],
+      "sidecar": false
+    },
     "fs:default",
     "fs:allow-appdata-read",
     "fs:allow-appdata-write",
@@ -35,6 +55,14 @@
     "sql:default",
     "sql:allow-execute",
     "log:default",
-    "dialog:default"
+    "dialog:default",
+    "os:default",
+    {
+      "identifier": "http:default",
+      "allow": [
+        "wss://*"
+      ]
+    },
+    "websocket:default"
   ]
 }

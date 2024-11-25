@@ -1,0 +1,9 @@
+#champion-select > .branding {
+      @apply flex justify-center items-center gap-x-[min(2vw,2vh)];
+      & > img {
+            @apply h-full;
+      }
+      & > .text {
+            @apply text-[min(6vw,6vh)]
+      }
+}

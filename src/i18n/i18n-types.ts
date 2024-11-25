@@ -130,6 +130,14 @@ type RootTranslation = {
 			}
 		}
 	}
+	routes: {
+		championSelect: {
+			/**
+			 * C​h​a​m​p​i​o​n​ ​S​e​l​e​c​t
+			 */
+			title: string
+		}
+	}
 }
 
 export type TranslationFunctions = {
@@ -243,6 +251,14 @@ export type TranslationFunctions = {
 				 */
 				none: () => LocalizedString
 			}
+		}
+	}
+	routes: {
+		championSelect: {
+			/**
+			 * Champion Select
+			 */
+			title: () => LocalizedString
 		}
 	}
 }

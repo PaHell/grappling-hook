@@ -1,0 +1,18 @@
+            #champion-select .player > .details {
+                  @apply flex flex-col justify-center;
+                  & > .text {
+                        @apply leading-tight;
+                        &:empty {
+                              @apply hidden;
+                        }
+                        &.champion {
+                              @apply text-[min(3vw,3vh)];
+                        }
+                        &.player {
+                              @apply text-[min(3vw,3vh)] font-extrabold uppercase;
+                        }
+                        &.role {
+                              @apply text-[min(2.75vw,2.75vh)];
+                        }
+                  }
+            }

@@ -1,0 +1,43 @@
+#champion-select > .infobar {
+            grid-area: infobar;
+            @apply self-start py-4 overflow-hidden grid grid-cols-[1fr_auto_1fr] items-center text-center;
+            & > .spacer {
+                  @apply w-full h-1 flex bg-yellow-400;
+                  &:nth-child(1),
+                  &:nth-child(3) {
+                        &:before {
+                              content: "";
+                              @apply inline-flex w-12 h-12 border-b-4 border-yellow-400;
+                        }
+                  }
+                  &:nth-child(1) {
+                        @apply justify-end;
+                        &:before {
+                              @apply border-l-4 -mr-12 rounded-bl-full;
+                        }
+                  }
+                  &:nth-child(3) {
+                        &:before {
+                              @apply border-r-4 -ml-12 rounded-br-full;
+                        }
+                  }
+            }
+            & > .text {
+                  @apply h-8 leading-5 mx-12 text-[min(4vw,4vh)] uppercase;
+            }
+            & > .timer {
+                  @apply h-8 mt-3 col-start-2 grid grid-cols-[1fr_auto_1fr] items-center;
+                  & > .spacer {
+                        @apply w-full h-1 bg-yellow-400;
+                        &:nth-child(1) {
+                              @apply ml-12;
+                        }
+                        &:nth-child(3) {
+                              @apply -ml-12;
+                        }
+                  }
+                  & > .text {
+                        @apply h-6 mx-24 text-[min(5vw,5vh)] leading-5;
+                  }
+            }
+      }

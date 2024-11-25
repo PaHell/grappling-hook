@@ -1,46 +1,74 @@
 #champion-select {
-      @apply w-screen h-screen grid grid-cols-[1fr_auto_1fr] grid-rows-[1fr_2fr_2fr_2fr_2fr_2fr] gap-6 bg-black text-white;
+      @apply w-auto h-screen grid gap-[min(2vw,2vh)] p-[min(4vw,4vh)] bg-black text-white font-serif font-bold text-[min(2.5vw,2.5vh)];
+      grid-template-columns: 1fr 1fr 2px 1fr 1fr;
+      grid-template-rows: 1fr 1fr 10fr 1fr;
       grid-template-areas:
-            "bans0   timer  bans1"
-            "player0 splash player5"
-            "player1 splash player6"
-            "player2 splash player7"
-            "player3 splash player8"
-            "player4 splash player9";
-
-      & > .bans {
-            @apply flex gap-x-4;
-            &:nth-child(3) {
-                  @apply justify-end;
-            }
-            & > div {
-                  @apply h-full aspect-square bg-blue-500;
-            }
+            "team0    infobar  infobar  infobar  team1   "
+            "bans0    infobar  infobar  infobar  bans1   "
+            "players0 players0 splash   players1 players1"
+            "branding branding branding branding branding";
+      & > * {
+            @apply relative z-40;
       }
-      & > .timer {
-            @apply w-48 h-full bg-gray-500;
-      }
-      & > .player {
-            @apply flex gap-x-4 bg-red-500;
-            /* make every 2nd reverse layout*/
-            &:nth-child(1n+10) {
+      & > .team {
+            grid-area: team0;
+            @apply overflow-hidden flex;
+            &[data-team="1"] {
+                  grid-area: team1;
                   @apply flex-row-reverse;
-            }
-            & > .summoners {
-                  @apply grid grid-rows-2 gap-y-4;
-                  & > .summoner {
-                        @apply aspect-square bg-yellow-400;
+                  & > div {
+                        @apply justify-end;
+                        & > .text {
+                              @apply text-end;
+                        }
                   }
             }
-            & > .champion {
-                  @apply h-full aspect-square bg-teal-500;
+      }
+      & > .bans {
+            grid-area: bans0;
+            @apply flex gap-x-[min(1vw,1vh)];
+            &[data-team="1"] {
+                  grid-area: bans1;
+                  @apply justify-end;
             }
-            & > .details {
-                  @apply h-full flex-1 bg-purple-500;
+      }
+      & > .infobar {
+            grid-area: infobar;
+            @apply self-start overflow-hidden;
+      }
+      & > .players {
+            grid-area: players0;
+            @apply overflow-hidden flex flex-col justify-center gap-y-[min(3vw,3vh)];
+            & > .player {
+                  @apply h-[20%] flex gap-x-[min(1.5vw,1.5vh)];
+                  & > .summoners {
+                        @apply flex-shrink-0 h-full grid grid-rows-2 gap-y-[min(1vw,1vh)];
+                        & > .summoner {
+                              @apply aspect-square;
+                        }
+                  }
+                  & > .champion {
+                        @apply flex-shrink-0 aspect-square;
+                  }
+                  & > .details {
+                        @apply flex-1 overflow-hidden;
+                  }
+            }
+            &[data-team="1"] {
+                  grid-area: players1;
+                  & > .player {
+                        @apply flex-row-reverse;
+                        & > .details {
+                              @apply text-end;
+                        }
+                  }
             }
       }
       & > .splash {
-            @apply bg-green-500;
+            grid-area: splash;
       }
-
+      & > .branding {
+            grid-area: branding;
+            @apply overflow-hidden;
+      }
 }

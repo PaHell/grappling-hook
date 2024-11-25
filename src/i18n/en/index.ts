@@ -56,6 +56,11 @@ const en = {
 				none: 'No settings',
 			}
 		} satisfies ModelTranslation<InferSelectModel<typeof players>>
+	},
+	routes: {
+		championSelect: {
+			title: 'Champion Select',
+		},
 	}
 } satisfies BaseTranslation
 
