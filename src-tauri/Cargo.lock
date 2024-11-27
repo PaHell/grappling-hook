@@ -1597,7 +1597,12 @@ dependencies = [
 name = "grappling-hook2"
 version = "0.1.0"
 dependencies = [
+ "base64 0.21.7",
+ "futures-util",
+ "getrandom 0.2.15",
+ "http 1.1.0",
  "league-client",
+ "native-tls",
  "serde",
  "serde_json",
  "tauri",
@@ -1610,7 +1615,10 @@ dependencies = [
  "tauri-plugin-shell",
  "tauri-plugin-sql",
  "tauri-plugin-websocket",
+ "thiserror 2.0.3",
  "tokio",
+ "tokio-tungstenite 0.24.0",
+ "url",
  "windows-version",
 ]
 
