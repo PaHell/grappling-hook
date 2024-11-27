@@ -1,4 +1,4 @@
-import { sqliteTable, text, integer, type AnySQLiteColumn, customType } from 'drizzle-orm/sqlite-core';
+import { sqliteTable, text, integer, type AnySQLiteColumn, customType, blob } from 'drizzle-orm/sqlite-core';
 import { enumType } from './types';
 import { GameResult } from './enums';
 
@@ -12,6 +12,7 @@ export enum TableNames {
 
 export const tournaments = sqliteTable(TableNames.Tournaments, {
 	id: integer('id').primaryKey({ autoIncrement: true }),
+	img: blob('img'),
 	name: text('name').notNull(),
 	dateOfMatch: integer({ mode: 'timestamp' }),
 });
@@ -39,5 +40,7 @@ export const players = sqliteTable(TableNames.Players, {
 
 export const settings = sqliteTable(TableNames.Settings, {
 	id: integer('id').primaryKey({ autoIncrement: true }),
+	orgImg: blob('orgImg'),
+	orgName: text('orgName'),
 	locale: text('locale'),
 });

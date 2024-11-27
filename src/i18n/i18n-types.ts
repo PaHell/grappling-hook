@@ -19,6 +19,10 @@ type RootTranslation = {
 		 * S​e​a​r​c​h
 		 */
 		search: string
+		/**
+		 * M​o​r​e
+		 */
+		more: string
 	}
 	crud: {
 		'delete': {
@@ -131,6 +135,14 @@ type RootTranslation = {
 		}
 	}
 	routes: {
+		manage: {
+			tournaments: {
+				/**
+				 * P​l​a​y
+				 */
+				play: string
+			}
+		}
 		championSelect: {
 			/**
 			 * C​h​a​m​p​i​o​n​ ​S​e​l​e​c​t
@@ -146,6 +158,10 @@ export type TranslationFunctions = {
 		 * Search
 		 */
 		search: () => LocalizedString
+		/**
+		 * More
+		 */
+		more: () => LocalizedString
 	}
 	crud: {
 		'delete': {
@@ -254,6 +270,14 @@ export type TranslationFunctions = {
 		}
 	}
 	routes: {
+		manage: {
+			tournaments: {
+				/**
+				 * Play
+				 */
+				play: () => LocalizedString
+			}
+		}
 		championSelect: {
 			/**
 			 * Champion Select

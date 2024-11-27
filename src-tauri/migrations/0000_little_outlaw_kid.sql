@@ -19,6 +19,13 @@ CREATE TABLE `players` (
 );
 --> statement-breakpoint
 CREATE UNIQUE INDEX `players_ign_unique` ON `players` (`ign`);--> statement-breakpoint
+CREATE TABLE `settings` (
+	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`orgImg` blob,
+	`orgName` text,
+	`locale` text
+);
+--> statement-breakpoint
 CREATE TABLE `teams` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`name` text NOT NULL
@@ -26,6 +33,7 @@ CREATE TABLE `teams` (
 --> statement-breakpoint
 CREATE TABLE `tournaments` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
+	`img` blob,
 	`name` text NOT NULL,
 	`dateOfMatch` integer
 );

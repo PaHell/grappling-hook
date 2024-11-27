@@ -16,146 +16,50 @@
 	import time from '@/time';
 	import icons from '@/icons';
 	import { tournaments } from '@/database/schema';
+	import LL from '$i18n/i18n-svelte.js';
+	import { setBranding } from '../../../champion-select/index.js';
 
 	let { data } = $props();
 	let defaultLayout = [265, 440, 655];
 
 	let todayDate = $state(now(getLocalTimeZone()));
+
+	async function playTournament() {
+		setBranding({
+			logo: data.tournament.img,
+			headline: data.tou,
+			subtitle: data.tournament.name
+		});
+	}
 </script>
 
 <Resizable.Pane defaultSize={defaultLayout[2]}>
 	<div class="flex h-full flex-col">
-		<div class="mb-1 flex items-center p-2">
+		<div class="flex items-center p-2">
 			<div class="flex items-center gap-2">
 				<Tooltip.Root openDelay={0} group>
-					<Tooltip.Trigger
-						id="archive_tooltip"
-						class={buttonVariants({ variant: 'ghost', size: 'icon' })}
-					>
-						<Icon name={icons.controls.delete} class="size-4" />
+					<Tooltip.Trigger class={buttonVariants({ variant: 'ghost', size: 'icon' })}>
+						<Icon name={icons.controls.edit} />
 						<span class="sr-only">Archive</span>
 					</Tooltip.Trigger>
 					<Tooltip.Content>Archive</Tooltip.Content>
 				</Tooltip.Root>
 				<Tooltip.Root openDelay={0} group>
-					<Tooltip.Trigger
-						id="move_to_junk_tooltip"
-						class={buttonVariants({ variant: 'ghost', size: 'icon' })}
-					>
-						<Icon name={icons.controls.delete} class="size-4" />
+					<Tooltip.Trigger class={buttonVariants({ variant: 'ghost', size: 'icon' })}>
+						<Icon name={icons.controls.delete} />
 						<span class="sr-only">Move to junk</span>
 					</Tooltip.Trigger>
 					<Tooltip.Content>Move to junk</Tooltip.Content>
 				</Tooltip.Root>
-				<Tooltip.Root openDelay={0} group>
-					<Tooltip.Trigger
-						id="move_to_trash_tooltip"
-						class={buttonVariants({ variant: 'ghost', size: 'icon' })}
-					>
-						<Icon name={icons.controls.delete} class="size-4" />
-						<span class="sr-only">Move to trash</span>
-					</Tooltip.Trigger>
-					<Tooltip.Content>Move to trash</Tooltip.Content>
-				</Tooltip.Root>
-				<Separator orientation="vertical" class="mx-1 h-6" />
-				<Tooltip.Root openDelay={0} group>
-					<Popover.Root portal={null}>
-						<Tooltip.Trigger asChild let:builder={tooltip_builder} id="snooze_popover">
-							<Popover.Trigger asChild let:builder={popover_builder} id="snooze_popover">
-								<Button builders={[tooltip_builder, popover_builder]} variant="ghost" size="icon">
-									<Icon name={icons.controls.delete} class="size-4" />
-									<span class="sr-only">Snooze</span>
-								</Button>
-							</Popover.Trigger>
-						</Tooltip.Trigger>
-						<Popover.Content class="flex w-[535px] p-0">
-							<div class="flex flex-col gap-2 border-r px-2 py-4">
-								<div class="px-4 text-sm font-medium">Snooze until</div>
-								<div class="grid min-w-[250px] gap-1">
-									<Button variant="ghost" class="justify-start font-normal">
-										Later today
-										<span class="text-muted-foreground ml-auto">
-											{1}
-										</span>
-									</Button>
-									<Button variant="ghost" class="justify-start font-normal">
-										Tomorrow
-										<span class="text-muted-foreground ml-auto">
-											{1}
-										</span>
-									</Button>
-									<Button variant="ghost" class="justify-start font-normal">
-										This weekend
-										<span class="text-muted-foreground ml-auto">
-											{1}
-										</span>
-									</Button>
-									<Button variant="ghost" class="justify-start font-normal">
-										Next week
-										<span class="text-muted-foreground ml-auto">
-											{1}
-										</span>
-									</Button>
-								</div>
-							</div>
-							<div class="p-2">
-								<Calendar bind:value={todayDate} initialFocus />
-							</div>
-						</Popover.Content>
-					</Popover.Root>
-					<Tooltip.Content>Snooze</Tooltip.Content>
-				</Tooltip.Root>
 			</div>
 			<div class="ml-auto flex items-center gap-2">
-				<Tooltip.Root openDelay={0} group>
-					<Tooltip.Trigger
-						id="reply_tooltip"
-						class={buttonVariants({ variant: 'ghost', size: 'icon' })}
-					>
-						<Icon name={icons.controls.delete} class="size-4" />
-						<span class="sr-only">Reply</span>
-					</Tooltip.Trigger>
-					<Tooltip.Content>Reply</Tooltip.Content>
-				</Tooltip.Root>
-				<Tooltip.Root openDelay={0} group>
-					<Tooltip.Trigger
-						id="reply_all_tooltip"
-						class={buttonVariants({ variant: 'ghost', size: 'icon' })}
-					>
-						<Icon name={icons.controls.delete} class="size-4" />
-						<span class="sr-only">Reply all</span>
-					</Tooltip.Trigger>
-					<Tooltip.Content>Reply all</Tooltip.Content>
-				</Tooltip.Root>
-				<Tooltip.Root openDelay={0} group>
-					<Tooltip.Trigger
-						id="forward_tooltip"
-						class={buttonVariants({ variant: 'ghost', size: 'icon' })}
-					>
-						<Icon name={icons.controls.delete} class="size-4" />
-						<span class="sr-only">Forward</span>
-					</Tooltip.Trigger>
-					<Tooltip.Content>Forward</Tooltip.Content>
-				</Tooltip.Root>
+				<Button onclick={playTournament}>
+					<Icon name={icons.controls.play} />
+					<span>{$LL.routes.manage.tournaments.play()}</span>
+				</Button>
 			</div>
-			<Separator orientation="vertical" class="mx-2 h-6" />
-			<DropdownMenu.Root>
-				<DropdownMenu.Trigger
-					id="more_options_dropdown"
-					class={buttonVariants({ variant: 'ghost', size: 'icon' })}
-				>
-					<Icon name={icons.controls.delete} class="size-4" />
-					<span class="sr-only">More</span>
-				</DropdownMenu.Trigger>
-				<DropdownMenu.Content align="end">
-					<DropdownMenu.Item>Mark as unread</DropdownMenu.Item>
-					<DropdownMenu.Item>Star thread</DropdownMenu.Item>
-					<DropdownMenu.Item>Add label</DropdownMenu.Item>
-					<DropdownMenu.Item>Mute thread</DropdownMenu.Item>
-				</DropdownMenu.Content>
-			</DropdownMenu.Root>
 		</div>
-		<Separator />
+		<Separator class="my-0" />
 		{#if data.tournament}
 			<div class="flex h-full flex-1 flex-col overflow-hidden">
 				<div class="flex items-start p-4">

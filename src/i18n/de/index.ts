@@ -7,6 +7,7 @@ import { GameResult } from '../../lib/database/enums';
 const de = {
 	general: {
 		search: 'Suchen',
+		more: 'Mehr',
 	},
 	crud: {
 		delete: {
@@ -58,6 +59,11 @@ const de = {
 		} satisfies ModelTranslation<InferSelectModel<typeof players>>
 	},
 	routes: {
+		manage: {
+			tournaments: {
+				play: 'Spielen',
+			}
+		},
 		championSelect: {
 			title: 'Meisterauswahl',
 		},

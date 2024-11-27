@@ -27,7 +27,7 @@
 	import SearchParamsNavigation from '@/components/SearchParamsNavigation.svelte';
 	import { goto } from '$app/navigation';
 	import { TournamentFilter } from './index.js';
-	import { createDialog, createWindow } from '@/window.js';
+	import { createDeleteDialog, createWindow } from '@/window.js';
 	import { window } from '@tauri-apps/api';
 
 	type Tournament = InferSelectModel<typeof _tournaments>;
@@ -77,7 +77,7 @@
 		try {
 			const item = tournament.name;
 			const model = $LL.models[TableNames.Tournaments].general.label(1);
-			const confirmed = await createDialog({
+			const confirmed = await createDeleteDialog({
 				title: $LL.crud.delete.deleteModelItem({ model, item }),
 				headline: $LL.crud.delete.areYouSure({ item }),
 				detail: $LL.crud.delete.lostForeverCannotBeUndone(),
@@ -99,7 +99,11 @@
 		try {
 			const result = await db
 				.insert(_tournaments)
-				.values({ name: 'New Tournament', dateOfMatch: new Date() })
+				.values({
+					img: null,
+					name: 'New Tournament',
+					dateOfMatch: new Date()
+				})
 				.returning();
 			console.log({ result });
 			tournaments = [...tournaments, ...result];

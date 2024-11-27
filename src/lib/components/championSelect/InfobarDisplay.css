@@ -1,43 +1,50 @@
 #champion-select > .infobar {
             grid-area: infobar;
             @apply self-start py-4 overflow-hidden grid grid-cols-[1fr_auto_1fr] items-center text-center;
+            & .text {
+                  @apply truncate;
+            }
             & > .spacer {
                   @apply w-full h-1 flex bg-yellow-400;
                   &:nth-child(1),
                   &:nth-child(3) {
                         &:before {
                               content: "";
-                              @apply inline-flex w-12 h-12 border-b-4 border-yellow-400;
+                              @apply inline-flex border-b-4 border-yellow-400;
+                              width: calc(min(8vw,8vh) + .25rem);
+                              height: calc(min(8vw,8vh) + .25rem);
                         }
                   }
                   &:nth-child(1) {
                         @apply justify-end;
                         &:before {
-                              @apply border-l-4 -mr-12 rounded-bl-full;
+                              @apply border-l-4 rounded-bl-full;
+                              margin-right: calc(-1 * (min(8vw,8vh) + .25rem));
                         }
                   }
                   &:nth-child(3) {
                         &:before {
-                              @apply border-r-4 -ml-12 rounded-br-full;
+                              @apply border-r-4 rounded-br-full;
+                              margin-left: calc(-1 * (min(8vw,8vh) + .25rem));
                         }
                   }
             }
             & > .text {
-                  @apply h-8 leading-5 mx-12 text-[min(4vw,4vh)] uppercase;
+                  @apply h-[min(6vw,6vh)] leading-[min(6vw,6vh)] mx-[min(9vw,9vh)] text-[min(4vw,4vh)] uppercase;
             }
             & > .timer {
-                  @apply h-8 mt-3 col-start-2 grid grid-cols-[1fr_auto_1fr] items-center;
+                  @apply h-[min(6vw,6vh)] mt-[min(2vw,2vh)] overflow-hidden col-start-2 grid grid-cols-[1fr_auto_1fr] items-center;
                   & > .spacer {
                         @apply w-full h-1 bg-yellow-400;
                         &:nth-child(1) {
-                              @apply ml-12;
+                              margin-left: calc(min(8vw,8vh) + .25rem);
                         }
                         &:nth-child(3) {
-                              @apply -ml-12;
+                              margin-left: calc(-1 * (min(8vw,8vh) + .25rem));
                         }
                   }
                   & > .text {
-                        @apply h-6 mx-24 text-[min(5vw,5vh)] leading-5;
+                        @apply h-[min(6vw,6vh)] mx-[min(15vw,15vh)] text-[min(7vw,7vh)] leading-[min(5.5vw,5.5vh)];
                   }
             }
       }

@@ -54,7 +54,6 @@
 	let errorDetails = '';
 
 	onMount(async () => {
-		await invoke('create_league_client_websocket');
 		// Listen for WebSocket messages from Rust
 		listen('league-client-websocket-message', (event) => {
 			if (event?.payload) {
@@ -67,11 +66,7 @@
 		});
 	});
 
-	onDestroy(async () => {
-		// cleanup
-		//socket?.disconnect();
-		await invoke('destroy_league_client_websocket');
-	});
+	onDestroy(async () => {});
 
 	let interval: NodeJS.Timeout | undefined;
 	let unsubTimer: UnlistenFn;

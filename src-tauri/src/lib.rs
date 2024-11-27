@@ -2,6 +2,7 @@ use league_client::client;
 use serde_json;
 use std::sync::Arc;
 use tauri::{command, AppHandle, Emitter, Manager, State};
+use tauri_plugin_fs::FsExt;
 use tauri_plugin_sql::{Migration, MigrationKind};
 use tokio::sync::{mpsc, Mutex};
 
