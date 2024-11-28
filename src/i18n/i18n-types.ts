@@ -25,6 +25,27 @@ type RootTranslation = {
 		more: string
 	}
 	crud: {
+		edit: {
+			/**
+			 * E​d​i​t​ ​{​m​o​d​e​l​}​ ​"​{​i​t​e​m​}​"
+			 * @param {unknown} item
+			 * @param {unknown} model
+			 */
+			editModelItem: RequiredParams<'item' | 'model'>
+			/**
+			 * E​d​i​t​ ​{​m​o​d​e​l​}
+			 * @param {unknown} model
+			 */
+			editModel: RequiredParams<'model'>
+			/**
+			 * D​i​s​c​a​r​d
+			 */
+			discard: string
+			/**
+			 * S​a​v​e​ ​C​h​a​n​g​e​s
+			 */
+			saveChanges: string
+		}
 		'delete': {
 			/**
 			 * D​e​l​e​t​e​ ​{​m​o​d​e​l​}​ ​"​{​i​t​e​m​}​"​?
@@ -164,6 +185,24 @@ export type TranslationFunctions = {
 		more: () => LocalizedString
 	}
 	crud: {
+		edit: {
+			/**
+			 * Edit {model} "{item}"
+			 */
+			editModelItem: (arg: { item: unknown, model: unknown }) => LocalizedString
+			/**
+			 * Edit {model}
+			 */
+			editModel: (arg: { model: unknown }) => LocalizedString
+			/**
+			 * Discard
+			 */
+			discard: () => LocalizedString
+			/**
+			 * Save Changes
+			 */
+			saveChanges: () => LocalizedString
+		}
 		'delete': {
 			/**
 			 * Delete {model} "{item}"?

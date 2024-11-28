@@ -6,48 +6,73 @@
 	import type { InferSelectModel } from 'drizzle-orm';
 	import { tournaments } from '@/database/schema';
 	import LL from '$i18n/i18n-svelte';
-	import type { FormDialog } from '..';
+	import { z } from 'zod';
+	import type { FormDialog } from '@/form';
+	import * as Form from '$lib/components/ui/form';
+	import { Input } from '$lib/components/ui/input';
+	import { type SuperValidated, type Infer, superForm, superValidate } from 'sveltekit-superforms';
+	import { zodClient } from 'sveltekit-superforms/adapters';
+	import { get } from 'svelte/store';
 
 	type Tournament = InferSelectModel<typeof tournaments>;
+	let title = '';
 	let data: Tournament = {
 		id: 0,
+		img: null,
 		name: '',
 		dateOfMatch: new Date()
 	};
-	let title = '';
-
-	let unlisten: UnlistenFn;
+	const formSchema = z.object<Tournament>({
+		id: z.number(),
+		img: z.unknown(),
+		name: z.string().min(2).max(50),
+		dateOfMatch: z.date().nullable()
+	});
+	let form = superForm(data, {
+		validators: zodClient(formSchema)
+	});
+	let { form: formData, enhance } = form;
 
 	emit('ready', {});
+	let unlisten: UnlistenFn;
 	listen<FormDialog<Tournament>>('data', (event) => {
-		console.log({ event });
-		data = event.payload;
+		data = event.payload.data;
 		title = data.name;
+		formData.set(data);
 	});
-	onMount(async () => {});
 	onDestroy(() => unlisten?.());
 
-	async function sendDialogEvent(value: Tournament) {
-		emit('dialog', { value });
+	async function submit() {
+		emit('dialog', get(form.form));
+		getCurrentWindow().close();
+	}
+
+	async function discard() {
 		getCurrentWindow().close();
 	}
 </script>
 
-<div class="w-screen h-screen flex items-center justify-center">
-	<div class="grid gap-4 px-6 pb-2">
-		<div class="flex flex-col space-y-2 text-center sm:text-left">
-			<h3 class="text-lg font-semibold">
-				{$LL.crud.edit.title({ model: title })}
-			</h3>
-			<p class="text-muted-foreground text-sm">{data.detail}</p>
-		</div>
-		<div class="flex items-center justify-end space-x-2">
-			<Button onclick={() => sendDialogEvent(false)} variant="secondary">
-				<span>{data.deny}</span>
-			</Button>
-			<Button onclick={() => sendDialogEvent(true)}>
-				<span>{data.confirm}</span>
-			</Button>
-		</div>
-	</div>
-</div>
+{#key form}
+	<form method="POST" use:enhance class="p-6">
+		<h3 class="text-lg font-semibold">
+			{$LL.crud.edit.editModelItem({
+				model: $LL.models.tournaments.general.label(1),
+				item: title
+			})}
+		</h3>
+		<Form.Field {form} name="name">
+			<Form.Control let:attrs>
+				<Form.Label>Name</Form.Label>
+				<Input {...attrs} bind:value={$formData.name} />
+			</Form.Control>
+			<Form.Description />
+			<Form.FieldErrors />
+		</Form.Field>
+		<Button type="reset" onclick={discard} variant="secondary">
+			<span>{$LL.crud.edit.discard()}</span>
+		</Button>
+		<Button type="submit" onclick={submit}>
+			<span>{$LL.crud.edit.saveChanges()}</span>
+		</Button>
+	</form>
+{/key}

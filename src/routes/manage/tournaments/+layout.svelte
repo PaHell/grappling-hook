@@ -29,6 +29,7 @@
 	import { TournamentFilter } from './index.js';
 	import { createDeleteDialog, createWindow } from '@/window.js';
 	import { window } from '@tauri-apps/api';
+	import { errorToString } from '@/error.js';
 
 	type Tournament = InferSelectModel<typeof _tournaments>;
 
@@ -48,47 +49,10 @@
 		console.log({ tournaments });
 	});
 
-	function errorToString(error: unknown) {
-		console.error(error);
-		switch (typeof error) {
-			case 'string':
-				return error;
-			case 'object':
-				if (error instanceof Error) {
-					return error.message;
-				}
-				return JSON.stringify(error);
-			default:
-				return String(error);
-		}
-	}
-
 	async function reloadTournaments() {
 		error = null;
 		try {
 			tournaments = await db.select().from(_tournaments);
-		} catch (e) {
-			error = errorToString(e);
-		}
-	}
-
-	async function askDelete(tournament: Tournament) {
-		error = null;
-		try {
-			const item = tournament.name;
-			const model = $LL.models[TableNames.Tournaments].general.label(1);
-			const confirmed = await createDeleteDialog({
-				title: $LL.crud.delete.deleteModelItem({ model, item }),
-				headline: $LL.crud.delete.areYouSure({ item }),
-				detail: $LL.crud.delete.lostForeverCannotBeUndone(),
-				confirm: $LL.crud.delete.deleteModel({
-					model
-				}),
-				deny: $LL.crud.delete.keep()
-			});
-			if (!confirmed) return;
-			await db.delete(_tournaments).where(eq(_tournaments.id, tournament.id));
-			tournaments = tournaments.filter((t) => t.id !== tournament.id);
 		} catch (e) {
 			error = errorToString(e);
 		}

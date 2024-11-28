@@ -10,6 +10,12 @@ const en = {
 		more: 'More',
 	},
 	crud: {
+		edit: {
+			editModelItem: 'Edit {model} \"{item}\"',
+			editModel: 'Edit {model}',
+			discard: 'Discard',
+			saveChanges: 'Save Changes',
+		},
 		delete: {
 			deleteModelItem: 'Delete {model} \"{item}\"?',
 			areYouSure: 'Are you sure you want to delete "{item}"?',

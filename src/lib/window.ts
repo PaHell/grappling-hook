@@ -29,7 +29,7 @@ export function createWindow(label: string, blurredBackground: boolean, options:
 
 export async function createDeleteDialog(data: DialogData): Promise<boolean> {
       const appWindow = await createWindow("dialog", true, {
-            url: '/dialogs',
+            url: '/dialogs/delete',
             title: data.title,
             parent: getCurrentWindow(),
             width: 512,
@@ -51,10 +51,10 @@ export async function createDeleteDialog(data: DialogData): Promise<boolean> {
       });
 }
 
-export async function createFormDialog<T>(type: FormType, pathname: string, title: string, data: T): Promise<T> {
+export async function createFormDialog<T>(type: FormType, url: string, title: string, data: T): Promise<T> {
       const appWindow = await createWindow("dialog", true, {
-            url: '/dialogs' + pathname,
-            title: title,
+            url,
+            title,
             parent: getCurrentWindow(),
             width: 512,
             height: 512,

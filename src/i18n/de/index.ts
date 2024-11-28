@@ -10,6 +10,12 @@ const de = {
 		more: 'Mehr',
 	},
 	crud: {
+		edit: {
+			editModelItem: '{model} \"{item}\" bearbeiten',
+			editModel: '{model} bearbeiten',
+			discard: 'Verwerfen',
+			saveChanges: 'Änderungen speichern',
+		},
 		delete: {
 			deleteModelItem: '{model} \"{item}\" löschen?',
 			areYouSure: 'Möchten Sie \"{item}\" wirklich löschen?',

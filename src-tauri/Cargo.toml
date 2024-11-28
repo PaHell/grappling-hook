@@ -21,7 +21,6 @@ tauri-build = { version = "2", features = [] }
 tauri = { version = "2", features = [ "macos-private-api"] }
 tauri-plugin-shell = "2"
 serde = { version = "1", features = ["derive"] }
-serde_json = "1"
 tauri-plugin-fs = "2"
 tauri-plugin-sql = { version = "2", features = ["sqlite"] }
 tauri-plugin-log = "2"
@@ -31,5 +30,14 @@ tauri-plugin-os = "2"
 tauri-plugin-websocket = { version = "2", features = ["native-tls"] }
 tauri-plugin-http = "2"
 league-client = "0.2.1"
-tokio = "1.41.1"
+thiserror = "2.0.3"
+tokio = { version = "1.28", features = ["full"] }
+tokio-tungstenite = { version = "0.24.0", features = ["native-tls"] }
+url = "2.4"
+serde_json = "1.0"
+base64 = "0.21"
+futures-util = "0.3.31"
+native-tls = "0.2.12"
+getrandom = "0.2.15"
+http = "1.1.0"
 

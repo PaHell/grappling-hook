@@ -3,24 +3,22 @@ import type { LayoutLoad } from "./$types";
 import { db } from "@/database";
 import { settings as _settings } from "@/database/schema";
 import { eq, type InferSelectModel } from "drizzle-orm";
+import { locale } from "$i18n/i18n-svelte";
+import { get } from "svelte/store";
 
 export const load: LayoutLoad = async (event) => {
-      try {
-            await migrate();
-            let settings = await db.query.settings.findFirst();
-            if (settings) {
-                  settings = (await db
-                        .insert(_settings)
-                        .values({
-                              id: 0,
-                              orgImg: null,
-                              orgName: "E-Corp",
-                              locale: "en",
-                        } satisfies InferSelectModel<typeof _settings>)
-                        .returning())[0];
-            }
-      } catch (error) {
-            console.error(error);
+      await migrate();
+      let settings = await db.query.settings.findFirst();
+      if (!settings) {
+            settings = (await db
+                  .insert(_settings)
+                  .values({
+                        id: 0,
+                        orgImg: null,
+                        orgName: "E-Corp",
+                        locale: get(locale),
+                  } satisfies InferSelectModel<typeof _settings>)
+                  .returning())[0];
       }
       const layoutCookie = localStorage.getItem("PaneForge:layout");
       const collapsedCookie = localStorage.getItem("PaneForge:collapsed");
@@ -32,5 +30,5 @@ export const load: LayoutLoad = async (event) => {
 
       if (collapsedCookie) collapsed = JSON.parse(collapsedCookie);
 
-      return { layout, collapsed };
+      return { settings, layout, collapsed };
 };

@@ -17,18 +17,127 @@
 	import icons from '@/icons';
 	import { tournaments } from '@/database/schema';
 	import LL from '$i18n/i18n-svelte.js';
-	import { setBranding } from '../../../champion-select/index.js';
+	import {
+		listenReady,
+		setBranding,
+		setCurrentAction,
+		setTeams,
+		setTimer
+	} from '../../../champion-select/index.js';
+	import { errorToString } from '@/error.js';
+	import { db } from '@/database/index.js';
+	import { tournaments as _tournaments, TableNames } from '$lib/database/schema';
+	import { createDeleteDialog, createFormDialog, createWindow } from '@/window.js';
+	import { eq, type InferSelectModel } from 'drizzle-orm';
+	import { FormType } from '@/form.js';
+	import { getAllWebviews } from '@tauri-apps/api/webview';
+	import type { WebviewWindow } from '@tauri-apps/api/webviewWindow';
+	import { onMount } from 'svelte';
+	import { invalidateAll } from '$app/navigation';
 
 	let { data } = $props();
 	let defaultLayout = [265, 440, 655];
+	let error: string | null = null;
 
-	let todayDate = $state(now(getLocalTimeZone()));
+	type Tournament = InferSelectModel<typeof _tournaments>;
+	const _windowLabel = 'championSelect';
+	let championSelect: WebviewWindow | undefined;
+	onMount(async () => {});
+
+	async function openEdit() {
+		error = null;
+		try {
+			const item = data.tournament.name;
+			const model = $LL.models[TableNames.Tournaments].general.label(1);
+			let updated = await createFormDialog(
+				FormType.Update,
+				'/dialogs/forms/tournament',
+				$LL.crud.edit.editModelItem({ model, item }),
+				data.tournament
+			);
+			console.log('Updated', updated);
+			await db
+				.update(_tournaments)
+				.set({
+					...updated,
+					dateOfMatch: updated.dateOfMatch ? new Date(updated.dateOfMatch) : null
+				})
+				.where(eq(_tournaments.id, data.tournament.id));
+			console.log('Updated2', updated);
+			await invalidateAll();
+		} catch (e) {
+			error = errorToString(e);
+		}
+	}
+
+	async function askDelete() {
+		error = null;
+		try {
+			const item = data.tournament.name;
+			const model = $LL.models[TableNames.Tournaments].general.label(1);
+			const confirmed = await createDeleteDialog({
+				title: $LL.crud.delete.deleteModelItem({ model, item }),
+				headline: $LL.crud.delete.areYouSure({ item }),
+				detail: $LL.crud.delete.lostForeverCannotBeUndone(),
+				confirm: $LL.crud.delete.deleteModel({
+					model
+				}),
+				deny: $LL.crud.delete.keep()
+			});
+			if (!confirmed) return;
+			await db.delete(_tournaments).where(eq(_tournaments.id, data.tournament.id));
+		} catch (e) {
+			error = errorToString(e);
+		}
+	}
+
+	function waitForChampionSelectWindow() {
+		return new Promise<void>(async (resolve) => {
+			championSelect = (await getAllWebviews()).find((wv) => wv.label === _windowLabel) as
+				| WebviewWindow
+				| undefined;
+			if (championSelect) {
+				console.log('Champion select window found');
+				resolve();
+				return;
+			}
+			championSelect = await createWindow(_windowLabel, false, {
+				url: '/champion-select',
+				title: $LL.routes.championSelect.title()
+			});
+			await listenReady(async () => {
+				console.log('Champion select ready');
+				resolve();
+			});
+		});
+	}
 
 	async function playTournament() {
-		setBranding({
+		await waitForChampionSelectWindow();
+		await setBranding({
 			logo: data.tournament.img,
-			headline: data.tou,
+			headline: data.settings?.orgName ?? APP_NAME,
 			subtitle: data.tournament.name
+		});
+		await setTimer(60);
+		await setCurrentAction('Player 1 is picking');
+		await setTeams(0, {
+			img: 'https://upload.wikimedia.org/wikipedia/en/thumb/4/43/Esports_organization_Fnatic_logo.svg/1200px-Esports_organization_Fnatic_logo.svg.png',
+			name: 'Red Team',
+			score: 3,
+			players: [{ name: 'Player 1' }, { name: 'Player 2' }, { name: 'Player 3' }]
+		});
+		await setTeams(1, {
+			img: 'https://upload.wikimedia.org/wikipedia/de/0/05/SK_Telecom_T1.png',
+			name: 'Blue Team',
+			score: 2,
+			players: [
+				{ name: 'Player 6' },
+				{ name: 'Player 7' },
+				{ name: 'Player 8' },
+				{ name: 'Player 9' },
+				{ name: 'Player 10' }
+			]
 		});
 	}
 </script>
@@ -38,18 +147,40 @@
 		<div class="flex items-center p-2">
 			<div class="flex items-center gap-2">
 				<Tooltip.Root openDelay={0} group>
-					<Tooltip.Trigger class={buttonVariants({ variant: 'ghost', size: 'icon' })}>
+					<Tooltip.Trigger
+						class={buttonVariants({ variant: 'ghost', size: 'icon' })}
+						onclick={openEdit}
+					>
 						<Icon name={icons.controls.edit} />
-						<span class="sr-only">Archive</span>
+						<span class="sr-only"
+							>{$LL.crud.edit.editModel({
+								model: $LL.models.tournaments.general.label(1)
+							})}</span
+						>
 					</Tooltip.Trigger>
-					<Tooltip.Content>Archive</Tooltip.Content>
+					<Tooltip.Content
+						>{$LL.crud.edit.editModel({
+							model: $LL.models.tournaments.general.label(1)
+						})}</Tooltip.Content
+					>
 				</Tooltip.Root>
 				<Tooltip.Root openDelay={0} group>
-					<Tooltip.Trigger class={buttonVariants({ variant: 'ghost', size: 'icon' })}>
+					<Tooltip.Trigger
+						class={buttonVariants({ variant: 'ghost', size: 'icon' })}
+						onclick={askDelete}
+					>
 						<Icon name={icons.controls.delete} />
-						<span class="sr-only">Move to junk</span>
+						<span class="sr-only"
+							>{$LL.crud.delete.deleteModel({
+								model: $LL.models.tournaments.general.label(1)
+							})}</span
+						>
 					</Tooltip.Trigger>
-					<Tooltip.Content>Move to junk</Tooltip.Content>
+					<Tooltip.Content
+						>{$LL.crud.delete.deleteModel({
+							model: $LL.models.tournaments.general.label(1)
+						})}</Tooltip.Content
+					>
 				</Tooltip.Root>
 			</div>
 			<div class="ml-auto flex items-center gap-2">

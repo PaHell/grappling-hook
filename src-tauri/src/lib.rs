@@ -1,120 +1,227 @@
-use league_client::client;
-use serde_json;
+use base64::{engine::general_purpose::STANDARD as base64, Engine};
+use futures_util::{SinkExt, StreamExt};
+use http::header::{HeaderName, HeaderValue};
+use http::Uri;
+use native_tls::{self, TlsConnector};
+use serde_json::{json, Value};
 use std::sync::Arc;
 use tauri::{command, AppHandle, Emitter, Manager, State};
 use tauri_plugin_fs::FsExt;
 use tauri_plugin_sql::{Migration, MigrationKind};
+use tokio::net::TcpStream;
 use tokio::sync::{mpsc, Mutex};
+use tokio::time::{sleep, Duration};
+use tokio_tungstenite::connect_async_tls_with_config;
+use tokio_tungstenite::{connect_async, tungstenite::protocol::Message};
+use tokio_tungstenite::{Connector, MaybeTlsStream, WebSocketStream};
 
-// Shared state to store the sender for the WebSocket
+const RECONNECT_DELAY: Duration = Duration::from_secs(5);
+const WEBSOCKET_CHANNEL_SIZE: usize = 16;
+
 #[derive(Default)]
-struct WebSocketState {
+struct LeagueClientState {
     tx: Arc<Mutex<Option<mpsc::Sender<String>>>>,
-    is_active: Arc<Mutex<bool>>, // Tracks whether the connection is active
+    is_connected: Arc<Mutex<bool>>,
 }
+
+#[derive(Debug, thiserror::Error)]
+enum WebsocketError {
+    #[error("Websocket not initialized")]
+    NotInitialized,
+    #[error("League Client Error: {0}")]
+    LeagueClient(String),
+    #[error("Serialization Error: {0}")]
+    Serialization(#[from] serde_json::Error),
+    #[error("Channel error: {0}")]
+    Channel(#[from] tokio::sync::mpsc::error::SendError<String>),
+    #[error("IO Error: {0}")]
+    Io(#[from] std::io::Error),
+    #[error("URL Parse Error: {0}")]
+    UrlParse(#[from] url::ParseError),
+    #[error("WebSocket Error: {0}")]
+    WebSocket(#[from] tokio_tungstenite::tungstenite::Error),
+}
+
+type Result<T> = std::result::Result<T, WebsocketError>;
 
 #[command]
 async fn create_league_client_websocket(
     app: AppHandle,
-    state: State<'_, WebSocketState>,
-) -> Result<(), String> {
-    let builder = client::Client::builder().map_err(|e| e.to_string())?;
-    let lc = builder.insecure(true).build().map_err(|e| e.to_string())?;
-
-    let connected = lc.connect_to_socket().await.map_err(|e| e.to_string())?;
-
-    let speaker = league_client::subscribe(connected).await;
-
-    let msg = (5, "OnJsonApiEvent");
-    let msg = serde_json::to_string(&msg).map_err(|e| e.to_string())?;
-    speaker.send(msg).await.map_err(|e| e.to_string())?;
-
-    let (tx, rx) = tokio::sync::mpsc::channel::<String>(32);
-
-    let reader = speaker.reader.clone();
-    let sender = speaker;
-
-    {
-        let mut shared_tx = state.tx.lock().await;
-        *shared_tx = Some(tx);
+    state: State<'_, LeagueClientState>,
+) -> std::result::Result<(), String> {
+    loop {
+        match attempt_connection(&app, &state).await {
+            Ok(_) => break,
+            Err(e) => {
+                eprintln!("Connection attempt failed: {}", e);
+                sleep(RECONNECT_DELAY).await;
+            }
+        }
     }
+    Ok(())
+}
 
-    {
-        let mut is_active = state.is_active.lock().await;
-        *is_active = true;
+async fn attempt_connection(app: &AppHandle, state: &State<'_, LeagueClientState>) -> Result<()> {
+    let (port, password) = get_client_credentials()?;
+    let ws_stream = connect_to_client(port, &password).await?;
+    let (tx, rx) = mpsc::channel(WEBSOCKET_CHANNEL_SIZE);
+    setup_connection_state(state, tx).await;
+
+    spawn_message_handlers(app.clone(), state.is_connected.clone(), rx, ws_stream);
+    Ok(())
+}
+
+fn get_client_credentials() -> Result<(String, String)> {
+    let lockfile = get_lockfile()?;
+    parse_lockfile(&lockfile)
+}
+
+fn get_lockfile() -> Result<String> {
+    let lockfile_path = if cfg!(windows) {
+        r"C:\Riot Games\League of Legends\lockfile"
+    } else {
+        "/Applications/League of Legends.app/Contents/LoL/lockfile"
+    };
+
+    std::fs::read_to_string(lockfile_path).map_err(|e| e.into())
+}
+
+fn parse_lockfile(content: &str) -> Result<(String, String)> {
+    let parts: Vec<&str> = content.split(':').collect();
+    if parts.len() < 5 {
+        return Err(WebsocketError::LeagueClient(
+            "Invalid lockfile format".into(),
+        ));
     }
+    Ok((parts[2].to_string(), parts[3].to_string()))
+}
 
-    tokio::spawn({
-        let app = app.clone();
-        let is_active = state.is_active.clone();
-        async move {
-            while *is_active.lock().await {
-                if let Ok(msg) = reader.recv_async().await {
-                    match serde_json::to_string(&msg.into_message()) {
-                        Ok(json_message) => {
-                            if let Err(e) =
-                                app.emit("league-client-websocket-message", json_message)
-                            {
+async fn connect_to_client(
+    port: String,
+    password: &str,
+) -> std::result::Result<WebSocketStream<MaybeTlsStream<TcpStream>>, WebsocketError> {
+    let ws_url = format!("wss://127.0.0.1:{}", port);
+
+    let uri: Uri = ws_url.parse().expect("error parsing url");
+
+    let auth = format!("riot:{}", password);
+    let auth_header = format!("Basic {}", base64.encode(auth));
+
+    let mut request = tokio_tungstenite::tungstenite::handshake::client::Request::builder()
+        .method("GET")
+        .uri(&ws_url)
+        .header("Host", uri.host().unwrap())
+        .header("Authorization", auth_header)
+        .header("Sec-WebSocket-Key", generate_key())
+        .header("Sec-WebSocket-Version", "13")
+        .header("Connection", "Upgrade")
+        .header("Upgrade", "websocket")
+        .body(())
+        .map_err(|e| WebsocketError::WebSocket(e.into()))?;
+
+    let tls_connector = native_tls::TlsConnector::builder()
+        .danger_accept_invalid_certs(true)
+        .danger_accept_invalid_hostnames(true)
+        .build()
+        .map_err(|e| WebsocketError::LeagueClient(e.to_string()))?;
+
+    let connector = Connector::NativeTls(tls_connector);
+
+    let (mut ws_stream, _) = connect_async_tls_with_config(request, None, false, Some(connector))
+        .await
+        .map_err(WebsocketError::WebSocket)?;
+
+    let subscription_message = json!([5, "OnJsonApiEvent"]).to_string();
+    ws_stream
+        .send(Message::Text(subscription_message))
+        .await
+        .map_err(WebsocketError::WebSocket)?;
+
+    Ok(ws_stream)
+}
+fn generate_key() -> String {
+    let mut key = [0u8; 16];
+    getrandom::getrandom(&mut key).unwrap();
+    base64::encode(&key)
+}
+async fn setup_connection_state(state: &LeagueClientState, tx: mpsc::Sender<String>) {
+    *state.tx.lock().await = Some(tx);
+    *state.is_connected.lock().await = true;
+}
+fn spawn_message_handlers(
+    app: AppHandle,
+    is_connected: Arc<Mutex<bool>>,
+    mut rx: mpsc::Receiver<String>,
+    mut ws_stream: tokio_tungstenite::WebSocketStream<
+        tokio_tungstenite::MaybeTlsStream<tokio::net::TcpStream>,
+    >,
+) {
+    tokio::spawn(async move {
+        while *is_connected.lock().await {
+            tokio::select! {
+                Some(msg) = rx.recv() => {
+                    if let Err(e) = ws_stream.send(Message::Text(msg)).await {
+                        eprintln!("Failed to send message: {}", e);
+                    }
+                }
+                msg = ws_stream.next() => {
+                    match msg {
+                        Some(Ok(Message::Text(text))) => {
+                            println!("New message: {}", text);
+                            if let Err(e) = app.emit("league-client-websocket-message", text) {
                                 eprintln!("Failed to emit WebSocket message: {}", e);
                             }
                         }
-                        Err(e) => eprintln!("Failed to serialize WebSocket message: {}", e),
+                        Some(Ok(Message::Close(_))) => {
+                            *is_connected.lock().await = false;
+                            break;
+                        }
+                        Some(Err(e)) => {
+                            eprintln!("WebSocket error: {}", e);
+                            *is_connected.lock().await = false;
+                            break;
+                        }
+                        _ => {}
                     }
                 }
             }
         }
     });
-
-    tokio::spawn(async move {
-        let mut rx = rx;
-        while let Some(msg) = rx.recv().await {
-            if let Err(e) = sender.send(msg).await {
-                eprintln!("Failed to send message: {}", e);
-            }
-        }
-    });
-
-    Ok(())
 }
-
 #[command]
-async fn send_message_to_websocket(
+async fn send_message_to_client(
     message: String,
-    state: State<'_, WebSocketState>,
-) -> Result<(), String> {
-    let shared_tx = state.tx.lock().await;
-
-    if let Some(tx) = &*shared_tx {
-        tx.send(message).await.map_err(|e| e.to_string())?;
-        Ok(())
-    } else {
-        Err("WebSocket is not initialized.".to_string())
+    state: State<'_, LeagueClientState>,
+) -> std::result::Result<(), String> {
+    match &*state.tx.lock().await {
+        Some(tx) => tx.send(message).await.map_err(|e| e.to_string()),
+        None => Err("Websocket not initialized".to_string()),
     }
 }
 
 #[command]
-async fn destroy_league_client_websocket(state: State<'_, WebSocketState>) -> Result<(), String> {
-    {
-        let mut is_active = state.is_active.lock().await;
-        *is_active = false; // Signal tasks to stop
-    }
-
-    {
-        let mut shared_tx = state.tx.lock().await;
-        *shared_tx = None; // Clear the sender
-    }
-
+async fn destroy_league_client_connection(
+    state: State<'_, LeagueClientState>,
+) -> std::result::Result<(), String> {
+    *state.tx.lock().await = None;
+    *state.is_connected.lock().await = false;
     Ok(())
 }
 
-// Learn more about Tauri commands at https://tauri.app/develop/calling-rust/
 #[command]
-fn greet(name: &str) -> String {
-    format!("Hello, {}! You've been greeted from Rust!", name)
+async fn is_websocket_connected(
+    state: State<'_, LeagueClientState>,
+) -> std::result::Result<bool, String> {
+    Ok(*state.is_connected.lock().await)
 }
 
-#[cfg_attr(mobile, tauri::mobile_entry_point)]
+#[command]
+fn get_database_filename() -> std::result::Result<String, ()> {
+    Ok("app.sqlite".to_string())
+}
+
 pub fn run() {
+    /*
     let migrations = vec![
         // Define your migrations here
         Migration {
@@ -124,8 +231,10 @@ pub fn run() {
             kind: MigrationKind::Up,
         },
     ];
+    */
+
     tauri::Builder::default()
-        .manage(WebSocketState::default())
+        .manage(LeagueClientState::default())
         .plugin(tauri_plugin_http::init())
         .plugin(tauri_plugin_websocket::init())
         .plugin(tauri_plugin_os::init())
@@ -133,19 +242,36 @@ pub fn run() {
         .plugin(tauri_plugin_log::Builder::new().build())
         .plugin(
             tauri_plugin_sql::Builder::default()
-                .add_migrations("sqlite:app.sqlite", migrations)
+                /*
+                .add_migrations(
+                    &format!("sqlite:{}", get_database_filename().unwrap()),
+                    migrations,
+                )
+                */
                 .build(),
         )
         .plugin(tauri_plugin_fs::init())
         .plugin(tauri_plugin_shell::init())
         .invoke_handler(tauri::generate_handler![
-            greet,
+            get_database_filename,
             create_league_client_websocket,
-            destroy_league_client_websocket,
-            send_message_to_websocket
+            send_message_to_client,
+            destroy_league_client_connection,
+            is_websocket_connected
         ])
         .setup(|app| {
-            let _window = app.get_webview_window("main").unwrap();
+            let app_handle = Arc::new(app.handle().clone());
+            let app_handle_clone = Arc::clone(&app_handle);
+
+            tauri::async_runtime::spawn(async move {
+                let state = app_handle_clone.state::<LeagueClientState>();
+                if let Err(e) =
+                    create_league_client_websocket((*app_handle_clone).clone(), state).await
+                {
+                    eprintln!("Failed to create initial WebSocket connection: {}", e);
+                }
+            });
+
             Ok(())
         })
         .run(tauri::generate_context!())
