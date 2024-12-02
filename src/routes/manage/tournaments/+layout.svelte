@@ -128,8 +128,10 @@
 						>
 							<Icon name={icons.controls.delete} />
 						</Button>
-						<Button {href} {active} variant="ghost" class="flex-1 !h-auto">
-							<pre class="text">{JSON.stringify(item, null, 4)}</pre>
+						<Button {href} {active} variant="ghost" class="flex-1 flex-col !h-auto">
+							<img src={item.img} />
+							<h5>{item.name}</h5>
+							<p>{item.dateOfMatch}</p>
 						</Button>
 					</div>
 				{/snippet}

@@ -17,6 +17,7 @@
   },
   "license": "MIT",
   "dependencies": {
+    "@prisma/extension-accelerate": "^1.2.1",
     "@tauri-apps/api": "^2.1.1",
     "@tauri-apps/plugin-dialog": "~2.0.1",
     "@tauri-apps/plugin-fs": "~2.0.2",
@@ -39,7 +40,7 @@
     "@tauri-apps/cli": "^2.1.0",
     "@types/better-sqlite3": "^7.6.12",
     "autoprefixer": "^10.4.20",
-    "better-sqlite3": "^11.5.0",
+    "better-sqlite3": "^11.6.0",
     "bits-ui": "^0.21.16",
     "clsx": "^2.1.1",
     "cross-env": "^7.0.3",

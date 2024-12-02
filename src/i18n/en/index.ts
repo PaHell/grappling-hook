@@ -6,8 +6,18 @@ import { GameResult } from '../../lib/database/enums';
 
 const en = {
 	general: {
+		formats: {
+			dateTimeName: 'en-US'
+		},
 		search: 'Search',
 		more: 'More',
+	},
+	components: {
+		imageCropper: {
+			chooseImageFromLibrary: 'Choose Image from Library',
+			chooseFromExisting: 'Choose from Existing',
+			removeImage: 'Remove Image',
+		},
 	},
 	crud: {
 		edit: {
@@ -37,7 +47,20 @@ const en = {
 			general: {
 				label: 'Tournament{{s}}',
 				none: 'No tournament{{s}}',
-			}
+			},
+			img: {
+				label: 'Image',
+				placeholder: 'No Image',
+			},
+			name: {
+				label: 'Name',
+				placeholder: 'Great Tournament',
+			},
+			dateOfMatch: {
+				label: 'Date of Match',
+				placeholder: '2012-12-21',
+			},
+
 		} satisfies ModelTranslation<InferSelectModel<typeof tournaments>>,
 		[TableNames.Teams]: {
 			general: {

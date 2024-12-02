@@ -15,6 +15,12 @@ export type Translations = RootTranslation
 
 type RootTranslation = {
 	general: {
+		formats: {
+			/**
+			 * e​n​-​U​S
+			 */
+			dateTimeName: string
+		}
 		/**
 		 * S​e​a​r​c​h
 		 */
@@ -23,6 +29,22 @@ type RootTranslation = {
 		 * M​o​r​e
 		 */
 		more: string
+	}
+	components: {
+		imageCropper: {
+			/**
+			 * C​h​o​o​s​e​ ​I​m​a​g​e​ ​f​r​o​m​ ​L​i​b​r​a​r​y
+			 */
+			chooseImageFromLibrary: string
+			/**
+			 * C​h​o​o​s​e​ ​f​r​o​m​ ​E​x​i​s​t​i​n​g
+			 */
+			chooseFromExisting: string
+			/**
+			 * R​e​m​o​v​e​ ​I​m​a​g​e
+			 */
+			removeImage: string
+		}
 	}
 	crud: {
 		edit: {
@@ -105,6 +127,36 @@ type RootTranslation = {
 				 */
 				none: string
 			}
+			img: {
+				/**
+				 * I​m​a​g​e
+				 */
+				label: string
+				/**
+				 * N​o​ ​I​m​a​g​e
+				 */
+				placeholder: string
+			}
+			name: {
+				/**
+				 * N​a​m​e
+				 */
+				label: string
+				/**
+				 * G​r​e​a​t​ ​T​o​u​r​n​a​m​e​n​t
+				 */
+				placeholder: string
+			}
+			dateOfMatch: {
+				/**
+				 * D​a​t​e​ ​o​f​ ​M​a​t​c​h
+				 */
+				label: string
+				/**
+				 * 2​0​1​2​-​1​2​-​2​1
+				 */
+				placeholder: string
+			}
 		}
 		teams: {
 			general: {
@@ -175,6 +227,12 @@ type RootTranslation = {
 
 export type TranslationFunctions = {
 	general: {
+		formats: {
+			/**
+			 * en-US
+			 */
+			dateTimeName: () => LocalizedString
+		}
 		/**
 		 * Search
 		 */
@@ -183,6 +241,22 @@ export type TranslationFunctions = {
 		 * More
 		 */
 		more: () => LocalizedString
+	}
+	components: {
+		imageCropper: {
+			/**
+			 * Choose Image from Library
+			 */
+			chooseImageFromLibrary: () => LocalizedString
+			/**
+			 * Choose from Existing
+			 */
+			chooseFromExisting: () => LocalizedString
+			/**
+			 * Remove Image
+			 */
+			removeImage: () => LocalizedString
+		}
 	}
 	crud: {
 		edit: {
@@ -257,6 +331,36 @@ export type TranslationFunctions = {
 				 * No tournament{{s}}
 				 */
 				none: (arg0: number | string | boolean) => LocalizedString
+			}
+			img: {
+				/**
+				 * Image
+				 */
+				label: () => LocalizedString
+				/**
+				 * No Image
+				 */
+				placeholder: () => LocalizedString
+			}
+			name: {
+				/**
+				 * Name
+				 */
+				label: () => LocalizedString
+				/**
+				 * Great Tournament
+				 */
+				placeholder: () => LocalizedString
+			}
+			dateOfMatch: {
+				/**
+				 * Date of Match
+				 */
+				label: () => LocalizedString
+				/**
+				 * 2012-12-21
+				 */
+				placeholder: () => LocalizedString
 			}
 		}
 		teams: {

@@ -13,6 +13,12 @@
 	import { type SuperValidated, type Infer, superForm, superValidate } from 'sveltekit-superforms';
 	import { zodClient } from 'sveltekit-superforms/adapters';
 	import { get } from 'svelte/store';
+	import { DateFormatter, type DateValue, getLocalTimeZone } from '@internationalized/date';
+	import { cn } from '$lib/utils.js';
+	import { Calendar } from '$lib/components/ui/calendar/index.js';
+	import * as Popover from '$lib/components/ui/popover/index.js';
+	import DatePicker from '@/components/DatePicker.svelte';
+	import ImageCropper from '@/components/ImageCropper.svelte';
 
 	type Tournament = InferSelectModel<typeof tournaments>;
 	let title = '';
@@ -20,8 +26,9 @@
 		id: 0,
 		img: null,
 		name: '',
-		dateOfMatch: new Date()
+		dateOfMatch: ''
 	};
+
 	const formSchema = z.object<Tournament>({
 		id: z.number(),
 		img: z.unknown(),
@@ -53,26 +60,59 @@
 </script>
 
 {#key form}
-	<form method="POST" use:enhance class="p-6">
+	<form method="POST" use:enhance class="h-full flex flex-col p-6">
 		<h3 class="text-lg font-semibold">
 			{$LL.crud.edit.editModelItem({
 				model: $LL.models.tournaments.general.label(1),
 				item: title
 			})}
 		</h3>
-		<Form.Field {form} name="name">
-			<Form.Control let:attrs>
-				<Form.Label>Name</Form.Label>
-				<Input {...attrs} bind:value={$formData.name} />
-			</Form.Control>
-			<Form.Description />
-			<Form.FieldErrors />
-		</Form.Field>
-		<Button type="reset" onclick={discard} variant="secondary">
-			<span>{$LL.crud.edit.discard()}</span>
-		</Button>
-		<Button type="submit" onclick={submit}>
-			<span>{$LL.crud.edit.saveChanges()}</span>
-		</Button>
+		<div class="grid grid-cols-3 gap-3 mt-3">
+			<Form.Field {form} name="img" class="col-span-3">
+				<Form.Control let:attrs>
+					<ImageCropper
+						label={$LL.models.tournaments.img.label()}
+						placeholder={$LL.models.tournaments.img.placeholder()}
+						bind:value={$formData.img}
+						{...attrs}
+					/>
+				</Form.Control>
+				<Form.Description class="!mt-0" />
+				<Form.FieldErrors class="!mt-0" />
+			</Form.Field>
+			<Form.Field {form} name="name" class="col-span-3">
+				<Form.Control let:attrs>
+					<Input
+						label={$LL.models.tournaments.name.label()}
+						placeholder={$LL.models.tournaments.name.placeholder()}
+						bind:value={$formData.name}
+						autofocus
+						{...attrs}
+					/>
+				</Form.Control>
+				<Form.Description class="!mt-0" />
+				<Form.FieldErrors class="!mt-0" />
+			</Form.Field>
+			<Form.Field {form} name="dateOfMatch" class="col-span-3">
+				<Form.Control let:attrs>
+					<DatePicker
+						label={$LL.models.tournaments.dateOfMatch.label()}
+						placeholder={$LL.models.tournaments.dateOfMatch.placeholder()}
+						bind:value={$formData.dateOfMatch}
+						{...attrs}
+					/>
+				</Form.Control>
+				<Form.Description class="!mt-0" />
+				<Form.FieldErrors class="!mt-0" />
+			</Form.Field>
+		</div>
+		<div class="flex justify-end space-x-3 mt-auto">
+			<Button type="reset" onclick={discard} variant="secondary">
+				<span>{$LL.crud.edit.discard()}</span>
+			</Button>
+			<Button type="submit" onclick={submit}>
+				<span>{$LL.crud.edit.saveChanges()}</span>
+			</Button>
+		</div>
 	</form>
 {/key}

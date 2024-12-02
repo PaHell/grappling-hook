@@ -6,8 +6,18 @@ import { GameResult } from '../../lib/database/enums';
 
 const de = {
 	general: {
+		formats: {
+			dateTimeName: 'de-DE'
+		},
 		search: 'Suchen',
 		more: 'Mehr',
+	},
+	components: {
+		imageCropper: {
+			chooseImageFromLibrary: 'Bild aus Bibliothek wählen',
+			chooseFromExisting: 'Aus bestehendem wählen',
+			removeImage: 'Bild entfernen',
+		},
 	},
 	crud: {
 		edit: {
@@ -37,7 +47,19 @@ const de = {
 			general: {
 				label: 'Turnier{{e}}',
 				none: 'Keine Turniere',
-			}
+			},
+			img: {
+				label: 'Bild',
+				placeholder: 'Kein Bild',
+			},
+			name: {
+				label: 'Name',
+				placeholder: 'Großes Turnier',
+			},
+			dateOfMatch: {
+				label: 'Spieltermin',
+				placeholder: '1989-11-09',
+			},
 		} satisfies ModelTranslation<InferSelectModel<typeof tournaments>>,
 		[TableNames.Teams]: {
 			general: {

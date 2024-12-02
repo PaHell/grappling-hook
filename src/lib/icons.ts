@@ -1,5 +1,8 @@
 export default {
       app: "arrow-go-back-line",
+      general: {
+            calendar: "calendar-line",
+      },
       controls: {
             add: "add-line",
             edit: "edit-line",

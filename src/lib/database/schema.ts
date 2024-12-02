@@ -14,7 +14,7 @@ export const tournaments = sqliteTable(TableNames.Tournaments, {
 	id: integer('id').primaryKey({ autoIncrement: true }),
 	img: blob('img'),
 	name: text('name').notNull(),
-	dateOfMatch: integer({ mode: 'timestamp' }),
+	dateOfMatch: integer('dateOfMatch', { mode: 'timestamp_ms' }),
 });
 
 export const games = sqliteTable(TableNames.Games, {

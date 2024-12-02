@@ -1,0 +1,5 @@
+.image-cropper {
+      &:has(> .input > input:focus),
+      &:focus-within {
+      }
+}
