@@ -13,10 +13,10 @@
 	import LL from '../../i18n/i18n-svelte.js';
 	import Navigation from '@/components/Navigation.svelte';
 
-	let defaultLayout = [265, 440, 655];
+	let defaultLayout = [21, 35, 100 - 35 - 21];
 	let defaultCollapsed = false;
 	let isCollapsed = $state(defaultCollapsed);
-	let navCollapsedSize: number;
+	let navCollapsedSize = 4;
 	let { children } = $props();
 
 	type SidebarItem = {
@@ -78,8 +78,8 @@
 		defaultSize={defaultLayout[0]}
 		collapsedSize={navCollapsedSize}
 		collapsible
-		minSize={15}
-		maxSize={20}
+		minSize={21}
+		maxSize={21}
 		{onCollapse}
 		{onExpand}
 	>
@@ -90,7 +90,9 @@
 			)}
 		>
 			<Icon name={icons.app} />
-			<h5 class="font-branding text-xl h-7">{APP_NAME}</h5>
+			{#if !isCollapsed}
+				<h5 class="font-branding text-xl h-7">{APP_NAME}</h5>
+			{/if}
 		</div>
 		<Separator />
 		<div
@@ -116,10 +118,9 @@
 										builders={[builder]}
 										variant="ghost"
 										size="icon"
-										class="size-9"
+										class="items-center justify-center"
 									>
-										<Icon name={item.icon} class="size-4" />
-										<span>{item.title($LL)}</span>
+										<Icon name={item.icon} />
 									</Button>
 								</Tooltip.Trigger>
 								<Tooltip.Content side="right" class="flex items-center gap-4">
@@ -132,9 +133,9 @@
 								</Tooltip.Content>
 							</Tooltip.Root>
 						{:else}
-							<Button {href} {active} variant="ghost" class="w-full justify-start">
-								<Icon name={item.icon} class="mr-2 size-4" />
-								{item.title($LL)}
+							<Button {href} {active} variant="ghost" class="w-full items-center justify-start">
+								<Icon name={item.icon} class="mr-2" />
+								<span>{item.title($LL)}</span>
 								{#if item.label}
 									<span>{item.label($LL)}</span>
 								{/if}

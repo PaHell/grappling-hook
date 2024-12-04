@@ -194,14 +194,9 @@
 		{#if data.tournament}
 			<div class="flex h-full flex-1 flex-col overflow-hidden">
 				<div class="flex items-start p-4">
-					<div class="flex items-start gap-4 text-sm">
-						<Avatar.Root>
-							<Avatar.Image alt={data.tournament.id.toString().padStart(0, '0')} />
-							<Avatar.Fallback>
-								{data.tournament.id.toString().padStart(0, '0')}
-							</Avatar.Fallback>
-						</Avatar.Root>
-						<div class="grid gap-1">
+					<div class="flex items-center gap-4 text-sm">
+						<img src={data.tournament.img} alt={data.tournament.name} class="max-h-12 max-w-12" />
+						<div class="grid gap-0.5">
 							<div class="font-semibold">NAME: {data.tournament.name}</div>
 							<div class="line-clamp-1 text-xs">ID: {data.tournament.id}</div>
 						</div>

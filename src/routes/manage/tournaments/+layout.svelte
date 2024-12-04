@@ -30,6 +30,7 @@
 	import { createDeleteDialog, createWindow } from '@/window.js';
 	import { window } from '@tauri-apps/api';
 	import { errorToString } from '@/error.js';
+	import time from '@/time.js';
 
 	type Tournament = InferSelectModel<typeof _tournaments>;
 
@@ -77,7 +78,7 @@
 	}
 </script>
 
-<Resizable.Pane defaultSize={defaultLayout[1]} minSize={30}>
+<Resizable.Pane defaultSize={defaultLayout[1]} minSize={25} maxSize={35}>
 	<header>
 		<div class="flex items-center px-4 py-2">
 			<h1 class="flex-1 text-xl font-bold truncate">Tournaments</h1>
@@ -110,34 +111,41 @@
 		</div>
 	</header>
 	<Separator class="my-0" />
-	<ScrollArea class="h-screen">
-		<div class="flex flex-col gap-2 p-4">
-			<Navigation
-				items={tournaments}
-				pathSelector={(i) => '/manage/tournaments/' + i.id}
-				match={3}
-				class="flex flex-col"
-			>
-				{#snippet children({ item, href, active })}
-					<div class="flex relative">
-						<Button
-							variant="ghost"
-							size="icon"
-							class="absolute right-4"
-							onclick={() => askDelete(item)}
-						>
-							<Icon name={icons.controls.delete} />
-						</Button>
-						<Button {href} {active} variant="ghost" class="flex-1 flex-col !h-auto">
-							<img src={item.img} />
-							<h5>{item.name}</h5>
-							<p>{item.dateOfMatch}</p>
-						</Button>
+	<div class="flex flex-col gap-2 p-4">
+		<Navigation
+			items={tournaments}
+			pathSelector={(i) => '/manage/tournaments/' + i.id}
+			match={3}
+			class="flex flex-col"
+		>
+			{#snippet children({ item, href, active })}
+				<Button
+					{href}
+					{active}
+					variant="ghost"
+					class="flex-1 flex justify-start !h-auto gap-x-2 py-4"
+				>
+					{#if item.img}
+						<img src={item.img} alt={item.name} class="max-h-12 max-w-12" />
+					{:else}
+						<div class="h-12 w-12 bg-accent-foreground/5 flex items-center justify-center">
+							<Icon name={icons.models.tournament} class="text-2xl text-muted-foreground" />
+						</div>
+					{/if}
+					<div>
+						<h5 class="text">{item.name}</h5>
+						{#if item.dateOfMatch}
+							<p class="text text-sm">
+								{$time(item.dateOfMatch).fromNow()} ({$time(item.dateOfMatch).format(
+									$LL.general.formats.date()
+								)})
+							</p>
+						{/if}
 					</div>
-				{/snippet}
-			</Navigation>
-		</div>
-	</ScrollArea>
+				</Button>
+			{/snippet}
+		</Navigation>
+	</div>
 </Resizable.Pane>
 <Resizable.Handle withHandle />
 {@render children()}

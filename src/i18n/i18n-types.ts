@@ -20,6 +20,10 @@ type RootTranslation = {
 			 * e​n​-​U​S
 			 */
 			dateTimeName: string
+			/**
+			 * y​y​y​y​/​D​D​/​M​M
+			 */
+			date: string
 		}
 		/**
 		 * S​e​a​r​c​h
@@ -232,6 +236,10 @@ export type TranslationFunctions = {
 			 * en-US
 			 */
 			dateTimeName: () => LocalizedString
+			/**
+			 * yyyy/DD/MM
+			 */
+			date: () => LocalizedString
 		}
 		/**
 		 * Search

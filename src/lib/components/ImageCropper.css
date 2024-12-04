@@ -1,4 +1,11 @@
 .image-cropper {
+      @apply flex gap-x-4;
+      & > img {
+            @apply max-w-full max-h-32;
+      }
+      & > .input {
+            @apply fixed -top-96;
+      }
       &:has(> .input > input:focus),
       &:focus-within {
       }

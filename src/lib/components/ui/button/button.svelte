@@ -16,6 +16,7 @@
 
 <ButtonPrimitive.Root
 	{builders}
+	data-active={active}
 	class={cn(buttonVariants({ variant, size, className, active }))}
 	type="button"
 	{...$$restProps}

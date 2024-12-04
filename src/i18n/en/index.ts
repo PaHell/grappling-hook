@@ -7,7 +7,8 @@ import { GameResult } from '../../lib/database/enums';
 const en = {
 	general: {
 		formats: {
-			dateTimeName: 'en-US'
+			dateTimeName: 'en-US',
+			date: "yyyy/DD/MM",
 		},
 		search: 'Search',
 		more: 'More',

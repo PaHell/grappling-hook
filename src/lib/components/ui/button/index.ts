@@ -6,13 +6,13 @@ const buttonVariants = tv({
 	base: "focus-visible:ring-ring inline-flex items-center justify-center whitespace-nowrap rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-1 disabled:pointer-events-none disabled:opacity-50",
 	variants: {
 		variant: {
-			default: "bg-primary text-primary-foreground hover:bg-primary/90 shadow",
+			default: "bg-primary text-primary-foreground hover:bg-primary/90 shadow data-[active=true]:bg-primary/90",
 			destructive:
-				"bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-sm",
+				"bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-sm data-[active=true]:bg-destructive",
 			outline:
-				"relative border-2 border-transparent bg-accent-foreground/5 rounded-md transition-colors duration-200 ease-in-out",
-			secondary: "bg-accent-foreground/5 text-secondary-foreground hover:bg-accent-foreground/10",
-			ghost: "hover:bg-accent hover:text-accent-foreground",
+				"relative border-2 border-transparent bg-accent-foreground/5 rounded-md transition-colors duration-200 ease-in-out data-[active=true]:bg-accent-foreground/10",
+			secondary: "bg-accent-foreground/5 text-secondary-foreground hover:bg-accent-foreground/10 data-[active=true]:bg-accent-foreground/10",
+			ghost: "hover:bg-accent hover:text-accent-foreground data-[active=true]:bg-accent data-[active=true]:text-accent-foreground",
 			link: "text-primary underline-offset-4 hover:underline",
 		},
 		size: {
@@ -22,7 +22,7 @@ const buttonVariants = tv({
 			icon: "h-9 w-9",
 		},
 		active: {
-			true: "bg-red-500",
+			true: "",
 			false: ""
 		}
 	},

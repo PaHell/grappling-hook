@@ -7,7 +7,8 @@ import { GameResult } from '../../lib/database/enums';
 const de = {
 	general: {
 		formats: {
-			dateTimeName: 'de-DE'
+			dateTimeName: 'de-DE',
+			date: "yyyy-MM-DD",
 		},
 		search: 'Suchen',
 		more: 'Mehr',
