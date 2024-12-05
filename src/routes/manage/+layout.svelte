@@ -126,7 +126,7 @@
 								<Tooltip.Content side="right" class="flex items-center gap-4">
 									{item.title($LL)}
 									{#if item.label}
-										<span class="text-muted-foreground ml-auto">
+										<span class="text-secondary ml-auto">
 											{item.label($LL)}
 										</span>
 									{/if}

@@ -11,7 +11,7 @@
 
 <TabsPrimitive.List
 	on:change={(e) => console.log(e)}
-	class={cn('text-muted-foreground inline-flex items-center rounded justify-center', className)}
+	class={cn('text-secondary inline-flex items-center rounded justify-center', className)}
 	{...$$restProps}
 >
 	<slot />

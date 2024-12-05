@@ -9,7 +9,7 @@
             @apply block absolute
             w-full h-6 mt-1.5 leading-6 px-3 text-base
             transition-all duration-200 ease-in-out
-            text-muted-foreground
+            text-secondary
             select-none pointer-events-none;
       }
       
@@ -35,7 +35,7 @@
             }
 
             & > input {
-                  @apply placeholder:text-muted-foreground;
+                  @apply placeholder:text-secondary;
             }
       }
 }

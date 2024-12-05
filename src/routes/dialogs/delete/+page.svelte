@@ -35,7 +35,7 @@
 			<h3 class="text-lg font-semibold">
 				{data.headline}
 			</h3>
-			<p class="text-muted-foreground text-sm">{data.detail}</p>
+			<p class="text-secondary text-sm">{data.detail}</p>
 		</div>
 		<div class="flex items-center justify-end space-x-2">
 			<Button onclick={() => sendDialogEvent(false)} variant="secondary">

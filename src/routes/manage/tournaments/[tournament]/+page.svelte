@@ -6,7 +6,8 @@
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 	import { DateFormatter, getDayOfWeek, getLocalTimeZone, now } from '@internationalized/date';
 	import * as Avatar from '$lib/components/ui/avatar/index.js';
-	import { Button, buttonVariants } from '$lib/components/ui/button/index.js';
+	import { buttonVariants } from '$lib/components/ui/button/index.js';
+	import Button from '$lib/components/Button.svelte';
 	import { Calendar } from '$lib/components/ui/calendar/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
@@ -184,10 +185,11 @@
 				</Tooltip.Root>
 			</div>
 			<div class="ml-auto flex items-center gap-2">
-				<Button onclick={playTournament}>
-					<Icon name={icons.controls.play} />
-					<span>{$LL.routes.manage.tournaments.play()}</span>
-				</Button>
+				<Button
+					icon={icons.controls.play}
+					label={$LL.routes.manage.tournaments.play()}
+					onclick={playTournament}
+				/>
 			</div>
 		</div>
 		<Separator class="my-0" />
@@ -202,7 +204,7 @@
 						</div>
 					</div>
 					{#if data.tournament.dateOfMatch}
-						<div class="text-muted-foreground ml-auto text-xs">
+						<div class="text-secondary ml-auto text-xs">
 							{$time(data.tournament.dateOfMatch.toUTCString()).fromNow()}
 						</div>
 					{/if}
@@ -210,20 +212,19 @@
 				<Separator />
 				<div class="flex-1 overflow-y-auto whitespace-pre-wrap p-4 text-sm">
 					{data.tournament.dateOfMatch}
-				</div>
-				<Separator class="mt-auto" />
-				<div class="p-4 hidden">
-					<form>
-						<div class="grid gap-4">
-							<Textarea class="p-4" placeholder={`Reply ${data.tournament.name}...`} />
-							<div class="flex items-center">
-								<Label for="mute" class="flex items-center gap-2 text-xs font-normal">
-									<Switch id="mute" aria-label="Mute thread" /> Mute this thread
-								</Label>
-								<Button size="sm" class="ml-auto">Send</Button>
-							</div>
-						</div>
-					</form>
+					<div class="grid">
+						<div class="bg-background">bg-background</div>
+						<div class="bg-card">bg-card</div>
+						<div class="text-primary">text-primary</div>
+						<div class="text-secondary">text-secondary</div>
+						<div class="bg-accent">bg-accent</div>
+						<div class="bg-accent-foreground">bg-accent-foreground</div>
+						<div class="bg-warning">bg-warning</div>
+						<div class="bg-warning-foreground">bg-warning-foreground</div>
+						<div class="bg-danger">bg-danger</div>
+						<div class="bg-danger-foreground">bg-danger-foreground</div>
+						<div class="bg-border">bg-border</div>
+					</div>
 				</div>
 			</div>
 		{/if}

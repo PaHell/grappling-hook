@@ -129,7 +129,7 @@
 						<img src={item.img} alt={item.name} class="max-h-12 max-w-12" />
 					{:else}
 						<div class="h-12 w-12 bg-accent-foreground/5 flex items-center justify-center">
-							<Icon name={icons.models.tournament} class="text-2xl text-muted-foreground" />
+							<Icon name={icons.models.tournament} class="text-2xl text-secondary" />
 						</div>
 					{/if}
 					<div>
