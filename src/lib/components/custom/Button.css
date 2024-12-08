@@ -1,6 +1,6 @@
 .button {
       @apply inline-flex items-center justify-center
-      rounded-md
+      rounded-md gap-x-1
       text-sm font-medium whitespace-nowrap
       transition-colors;
       /* Size */
@@ -31,5 +31,13 @@
       }
       &.button-ghost {
             @apply bg-transparent text-white;
+            &:hover,
+            &:focus {
+                  @apply bg-white/5;
+            }
+            &:active,
+            &.active {
+                  @apply bg-white/10;
+            }
       }
 }

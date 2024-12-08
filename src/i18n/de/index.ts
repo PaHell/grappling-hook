@@ -91,6 +91,7 @@ const de = {
 		manage: {
 			tournaments: {
 				play: 'Spielen',
+				searchForTournament: 'Nach Turnier, Spieler or Vereinigungen suchen...',
 			}
 		},
 		championSelect: {

@@ -4,10 +4,10 @@
 	import type { Builder } from 'bits-ui';
 	import { Button as ButtonPrimitive } from 'bits-ui';
 
-	import type { HTMLButtonAttributes } from 'svelte/elements';
-	import Icon from './ui/icon/Icon.svelte';
+	import type { HTMLButtonAttributes, HTMLAnchorAttributes } from 'svelte/elements';
+	import Icon from './Icon.svelte';
 
-	interface Properties extends HTMLButtonAttributes {
+	export interface ButtonProperties {
 		icon?: string;
 		label: string;
 		hideLabel?: boolean;
@@ -30,7 +30,7 @@
 		builders,
 		children,
 		...others
-	}: Properties = $props();
+	}: ButtonProperties & HTMLButtonAttributes & HTMLAnchorAttributes = $props();
 </script>
 
 <ButtonPrimitive.Root

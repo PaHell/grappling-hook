@@ -218,6 +218,10 @@ type RootTranslation = {
 				 * P​l​a​y
 				 */
 				play: string
+				/**
+				 * S​e​a​r​c​h​ ​f​o​r​ ​a​ ​t​o​u​r​n​a​m​e​n​t​,​ ​p​l​a​y​e​r​s​ ​o​r​ ​t​e​a​m​s​.​.​.
+				 */
+				searchForTournament: string
 			}
 		}
 		championSelect: {
@@ -427,6 +431,10 @@ export type TranslationFunctions = {
 				 * Play
 				 */
 				play: () => LocalizedString
+				/**
+				 * Search for a tournament, players or teams...
+				 */
+				searchForTournament: () => LocalizedString
 			}
 		}
 		championSelect: {

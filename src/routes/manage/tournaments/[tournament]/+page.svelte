@@ -2,12 +2,12 @@
 	import * as Resizable from '$lib/components/ui/resizable/index.js';
 	import { Separator } from '$lib/components/ui/select/index.js';
 	import { APP_NAME } from '$env/static/public';
-	import Icon from '@/components/ui/icon/Icon.svelte';
+	import Icon from '@/components/custom/Icon.svelte';
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 	import { DateFormatter, getDayOfWeek, getLocalTimeZone, now } from '@internationalized/date';
 	import * as Avatar from '$lib/components/ui/avatar/index.js';
 	import { buttonVariants } from '$lib/components/ui/button/index.js';
-	import Button from '$lib/components/Button.svelte';
+	import Button from '$lib/components/custom/Button.svelte';
 	import { Calendar } from '$lib/components/ui/calendar/index.js';
 	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
 	import { Label } from '$lib/components/ui/label/index.js';
@@ -148,16 +148,18 @@
 		<div class="flex items-center p-2">
 			<div class="flex items-center gap-2">
 				<Tooltip.Root openDelay={0} group>
-					<Tooltip.Trigger
-						class={buttonVariants({ variant: 'ghost', size: 'icon' })}
-						onclick={openEdit}
-					>
-						<Icon name={icons.controls.edit} />
-						<span class="sr-only"
-							>{$LL.crud.edit.editModel({
+					<Tooltip.Trigger onclick={openEdit} asChild let:builder>
+						<Button
+							builders={[builder]}
+							variant="ghost"
+							size="icon"
+							icon={icons.controls.edit}
+							label={$LL.crud.edit.editModel({
 								model: $LL.models.tournaments.general.label(1)
-							})}</span
-						>
+							})}
+							hideLabel
+							onclick={openEdit}
+						/>
 					</Tooltip.Trigger>
 					<Tooltip.Content
 						>{$LL.crud.edit.editModel({
@@ -166,16 +168,18 @@
 					>
 				</Tooltip.Root>
 				<Tooltip.Root openDelay={0} group>
-					<Tooltip.Trigger
-						class={buttonVariants({ variant: 'ghost', size: 'icon' })}
-						onclick={askDelete}
-					>
-						<Icon name={icons.controls.delete} />
-						<span class="sr-only"
-							>{$LL.crud.delete.deleteModel({
+					<Tooltip.Trigger asChild let:builder>
+						<Button
+							builders={[builder]}
+							variant="ghost"
+							size="icon"
+							icon={icons.controls.delete}
+							label={$LL.crud.delete.deleteModel({
 								model: $LL.models.tournaments.general.label(1)
-							})}</span
-						>
+							})}
+							hideLabel
+							onclick={askDelete}
+						/>
 					</Tooltip.Trigger>
 					<Tooltip.Content
 						>{$LL.crud.delete.deleteModel({

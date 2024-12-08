@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Icon from '../ui/icon/Icon.svelte';
+	import Icon from '../custom/Icon.svelte';
 	import './TeamDisplay.css';
 
 	let {

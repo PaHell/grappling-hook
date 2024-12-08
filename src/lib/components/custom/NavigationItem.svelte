@@ -14,6 +14,7 @@
 	}
 	export let path = '';
 	export let match = 0; // 0 = exact, >0 = from start
+	export let matchQuery: string | undefined = undefined;
 
 	let active = false;
 	let currentPath = '';
@@ -24,7 +25,7 @@
 	function onNavigate() {
 		if (!browser) return;
 		currentPath = window.location.pathname;
-		active = matchPath(path, currentPath, match);
+		active = matchPath(path, currentPath, match, matchQuery);
 	}
 </script>
 

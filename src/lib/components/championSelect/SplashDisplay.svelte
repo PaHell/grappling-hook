@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	import { BanState, ChampionSelectPhase } from '.';
-	import Icon from '../ui/icon/Icon.svelte';
+	import Icon from '../custom/Icon.svelte';
 	import './SplashDisplay.css';
 
 	let {

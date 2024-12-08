@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { PickState } from '.';
-	import Icon from '../ui/icon/Icon.svelte';
+	import Icon from '../custom/Icon.svelte';
 	import './ChampionDisplay.css';
 
 	let {

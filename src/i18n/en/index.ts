@@ -92,6 +92,7 @@ const en = {
 		manage: {
 			tournaments: {
 				play: 'Play',
+				searchForTournament: 'Search for a tournament, players or teams...',
 			},
 		},
 		championSelect: {

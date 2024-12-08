@@ -10,6 +10,7 @@ export default {
             search: "search-line",
             more: "more-line",
             play: "play-line",
+            clear: "close-line",
       },
       models: {
             tournament: "calendar-line",

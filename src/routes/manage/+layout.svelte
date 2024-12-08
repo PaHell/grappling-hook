@@ -3,15 +3,15 @@
 	import * as Resizable from '$lib/components/ui/resizable/index.js';
 	import { Separator } from '$lib/components/ui/select/index.js';
 	import { APP_NAME } from '$env/static/public';
-	import Icon from '@/components/ui/icon/Icon.svelte';
-	import { Button } from '$lib/components/ui/button/index.js';
+	import Icon from '@/components/custom/Icon.svelte';
+	import Button from '$lib/components/custom/Button.svelte';
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
 	import type { LocalizedString } from 'typesafe-i18n';
 	import type { TranslationFunctions } from '../../i18n/i18n-types';
 	import { TableNames } from '@/database/schema.js';
 	import icons from '@/icons.js';
 	import LL from '../../i18n/i18n-svelte.js';
-	import Navigation from '@/components/Navigation.svelte';
+	import Navigation from '@/components/custom/Navigation.svelte';
 
 	let defaultLayout = [21, 35, 100 - 35 - 21];
 	let defaultCollapsed = false;
@@ -91,10 +91,10 @@
 		>
 			<Icon name={icons.app} />
 			{#if !isCollapsed}
-				<h5 class="font-branding text-xl h-7">{APP_NAME}</h5>
+				<h5 class="font-branding text-lg h-7">{APP_NAME}</h5>
 			{/if}
 		</div>
-		<Separator />
+		<Separator class="mb-0" />
 		<div
 			data-collapsed={isCollapsed}
 			class="group flex flex-col gap-4 py-2 data-[collapsed=true]:py-2"
@@ -113,15 +113,15 @@
 							<Tooltip.Root openDelay={0}>
 								<Tooltip.Trigger asChild let:builder>
 									<Button
+										builders={[builder]}
 										{href}
 										{active}
-										builders={[builder]}
 										variant="ghost"
 										size="icon"
-										class="items-center justify-center"
-									>
-										<Icon name={item.icon} />
-									</Button>
+										icon={item.icon}
+										label={item.title($LL)}
+										hideLabel
+									/>
 								</Tooltip.Trigger>
 								<Tooltip.Content side="right" class="flex items-center gap-4">
 									{item.title($LL)}
@@ -133,13 +133,14 @@
 								</Tooltip.Content>
 							</Tooltip.Root>
 						{:else}
-							<Button {href} {active} variant="ghost" class="w-full items-center justify-start">
-								<Icon name={item.icon} class="mr-2" />
-								<span>{item.title($LL)}</span>
-								{#if item.label}
-									<span>{item.label($LL)}</span>
-								{/if}
-							</Button>
+							<Button
+								{href}
+								{active}
+								variant="ghost"
+								class="w-full !justify-start"
+								icon={item.icon}
+								label={item.title($LL)}
+							/>
 						{/if}
 					{/snippet}
 				</Navigation>

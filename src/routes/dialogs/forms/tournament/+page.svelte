@@ -17,8 +17,8 @@
 	import { cn } from '$lib/utils.js';
 	import { Calendar } from '$lib/components/ui/calendar/index.js';
 	import * as Popover from '$lib/components/ui/popover/index.js';
-	import DatePicker from '@/components/DatePicker.svelte';
-	import ImageCropper from '@/components/ImageCropper.svelte';
+	import DatePicker from '@/components/custom/DatePicker.svelte';
+	import ImageCropper from '@/components/custom/ImageCropper.svelte';
 
 	type Tournament = InferSelectModel<typeof tournaments>;
 	let title = '';
