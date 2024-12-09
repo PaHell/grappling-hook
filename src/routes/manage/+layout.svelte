@@ -12,12 +12,14 @@
 	import icons from '@/icons.js';
 	import LL from '../../i18n/i18n-svelte.js';
 	import Navigation from '@/components/custom/Navigation.svelte';
+	import type { LayoutData } from './$types';
+	import CollapsableListNavigation from '@/components/custom/CollapsableListNavigation.svelte';
+	import { dev } from '$app/environment';
+	import { layoutSizes } from '.';
 
-	let defaultLayout = [21, 35, 100 - 35 - 21];
-	let defaultCollapsed = false;
-	let isCollapsed = $state(defaultCollapsed);
+	let isCollapsed = $state(false);
 	let navCollapsedSize = 4;
-	let { children } = $props();
+	let { data, children } = $props();
 
 	type SidebarItem = {
 		icon: string;
@@ -54,28 +56,37 @@
 		}
 	];
 
+	if (dev) {
+		sidebarItems.push({
+			title: () => 'UI Dev',
+			icon: icons.app,
+			path: '/manage/ui-dev'
+		});
+	}
+
 	function onPageChange(item: SidebarItem, index: number) {
 		console.log('Page change', item, index);
 	}
 
 	function onLayoutChange(sizes: number[]) {
-		document.cookie = `PaneForge:layout=${JSON.stringify(sizes)}`;
+		console.log('Layout change', sizes);
+		if (sizes.length === 3) layoutSizes.set(sizes);
 	}
 
 	function onCollapse() {
+		console.log('Collapsed');
 		isCollapsed = true;
-		document.cookie = `PaneForge:collapsed=${true}`;
 	}
 
 	function onExpand() {
+		console.log('Expanded');
 		isCollapsed = false;
-		document.cookie = `PaneForge:collapsed=${false}`;
 	}
 </script>
 
 <Resizable.PaneGroup direction="horizontal" {onLayoutChange} class="h-full items-stretch">
 	<Resizable.Pane
-		defaultSize={defaultLayout[0]}
+		defaultSize={$layoutSizes[0]}
 		collapsedSize={navCollapsedSize}
 		collapsible
 		minSize={21}
@@ -102,48 +113,15 @@
 			<nav
 				class="grid gap-1 px-2 group-[[data-collapsed=true]]:justify-center group-[[data-collapsed=true]]:px-2"
 			>
-				<Navigation
+				<CollapsableListNavigation
 					items={sidebarItems}
+					iconSelector={(i) => i.icon}
+					textSelector={(i) => i.title($LL)}
 					pathSelector={(i) => i.path}
 					match={2}
+					{isCollapsed}
 					onchange={onPageChange}
-				>
-					{#snippet children({ item, href, active })}
-						{#if isCollapsed}
-							<Tooltip.Root openDelay={0}>
-								<Tooltip.Trigger asChild let:builder>
-									<Button
-										builders={[builder]}
-										{href}
-										{active}
-										variant="ghost"
-										size="icon"
-										icon={item.icon}
-										label={item.title($LL)}
-										hideLabel
-									/>
-								</Tooltip.Trigger>
-								<Tooltip.Content side="right" class="flex items-center gap-4">
-									{item.title($LL)}
-									{#if item.label}
-										<span class="text-secondary ml-auto">
-											{item.label($LL)}
-										</span>
-									{/if}
-								</Tooltip.Content>
-							</Tooltip.Root>
-						{:else}
-							<Button
-								{href}
-								{active}
-								variant="ghost"
-								class="w-full !justify-start"
-								icon={item.icon}
-								label={item.title($LL)}
-							/>
-						{/if}
-					{/snippet}
-				</Navigation>
+				/>
 			</nav>
 		</div>
 	</Resizable.Pane>

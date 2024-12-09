@@ -20,15 +20,6 @@ export const load: LayoutLoad = async (event) => {
                   } satisfies InferSelectModel<typeof _settings>)
                   .returning())[0];
       }
-      const layoutCookie = localStorage.getItem("PaneForge:layout");
-      const collapsedCookie = localStorage.getItem("PaneForge:collapsed");
 
-      let layout: number[] | undefined;
-      let collapsed: boolean | undefined;
-
-      if (layoutCookie) layout = JSON.parse(layoutCookie);
-
-      if (collapsedCookie) collapsed = JSON.parse(collapsedCookie);
-
-      return { settings, layout, collapsed };
+      return { settings };
 };

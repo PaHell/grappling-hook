@@ -9,25 +9,34 @@
 		matchPathSegments: number,
 		matchQuery: string | undefined
 	): boolean {
-		const [path, pathQueries] = _path.split('?');
-		const [curr, currQueries] = _current.split('?');
-		if (matchPathSegments == 0 && !matchQuery) return path === curr;
+		let [path, pathQueries] = _path.split('?');
+		let [curr, currQueries] = _current.split('?');
+		if (path.endsWith('/')) path = path.slice(0, -1);
+		if (curr.endsWith('/')) curr = curr.slice(0, -1);
+		if (matchPathSegments === 0 && !matchQuery) return path === curr;
 		if (matchQuery) {
-			console.table({ path, pathQueries, curr, currQueries });
 			const pathQuery = pathQueries?.split('&').find((q) => q.startsWith(matchQuery));
 			const currQuery = currQueries?.split('&').find((q) => q.startsWith(matchQuery));
-			console.table({ pathQuery, currQuery });
 			if (!pathQuery || !currQuery || pathQuery !== currQuery) return false;
 			if (matchPathSegments == 0) return true;
 		}
 		const currSplit = curr.split('/');
 		const pathSplit = path.split('/');
-		console.table({ currSplit, pathSplit });
 		for (let i = 0; i <= matchPathSegments; i++) {
 			if (currSplit[i] !== pathSplit[i]) return false;
 		}
 		return true;
 	}
+
+	export type NavigationProperties<T> = {
+		items: T[];
+		pathSelector: (item: T) => string;
+		match?: number;
+		matchQuery?: string;
+		active?: number;
+		class?: string;
+		onchange?: (item: T, index: number) => void;
+	};
 </script>
 
 <script lang="ts">
@@ -41,14 +50,7 @@
 		class: classes = '',
 		onchange,
 		children
-	}: {
-		items: T[];
-		pathSelector: (item: T) => string;
-		match?: number;
-		matchQuery?: string;
-		active?: number;
-		class?: string;
-		onchange?: (item: T, index: number) => void;
+	}: NavigationProperties<T> & {
 		children: Snippet<
 			[
 				{

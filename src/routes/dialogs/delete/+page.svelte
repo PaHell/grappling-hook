@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Button from '@/components/ui/button/button.svelte';
+	import Button from '@/components/custom/Button.svelte';
 	import { emit, listen, type UnlistenFn } from '@tauri-apps/api/event';
 	import { getCurrentWindow } from '@tauri-apps/api/window';
 	import type { DialogData } from '.';
@@ -38,12 +38,8 @@
 			<p class="text-secondary text-sm">{data.detail}</p>
 		</div>
 		<div class="flex items-center justify-end space-x-2">
-			<Button onclick={() => sendDialogEvent(false)} variant="secondary">
-				<span>{data.deny}</span>
-			</Button>
-			<Button onclick={() => sendDialogEvent(true)}>
-				<span>{data.confirm}</span>
-			</Button>
+			<Button label={data.deny} onclick={() => sendDialogEvent(false)} variant="default" />
+			<Button label={data.confirm} onclick={() => sendDialogEvent(true)} variant="danger" />
 		</div>
 	</div>
 </div>

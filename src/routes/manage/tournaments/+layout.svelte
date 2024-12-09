@@ -27,12 +27,12 @@
 	import { errorToString } from '@/error.js';
 	import time from '@/time.js';
 	import TabNavigation from '@/components/custom/TabNavigation.svelte';
+	import MiddlePane from '../MiddlePane.svelte';
 
 	type Tournament = InferSelectModel<typeof _tournaments>;
 
 	let { data, children } = $props();
 	let tournaments: Tournament[] = $state([]);
-	let defaultLayout = [265, 440, 655];
 	let error: string | null = null;
 	let searchOpened = $state(false);
 	let searchValue = $state('');
@@ -76,60 +76,54 @@
 	}
 </script>
 
-<Resizable.Pane defaultSize={defaultLayout[1]} minSize={25} maxSize={35}>
-	<header>
-		<div class="flex items-center p-2">
-			<h1 class="ps-1 flex-1 text-xl font-bold truncate">Tournaments</h1>
-			<Button
-				icon={icons.controls.add}
-				label={$LL.models[TableNames.Tournaments].general.label(9999)}
-				onclick={onAddTournament}
+<MiddlePane title={$LL.models.tournaments.general.label(9999)}>
+	{#snippet headerRight()}
+		<Button
+			icon={icons.controls.add}
+			label={$LL.models[TableNames.Tournaments].general.label(9999)}
+			onclick={onAddTournament}
+		/>
+	{/snippet}
+	{#snippet subNavigation()}
+		{#if searchOpened}
+			<Input
+				label={$LL.general.search()}
+				placeholder={$LL.routes.manage.tournaments.searchForTournament()}
+				bind:value={searchValue}
+				class="flex-1"
 			/>
-		</div>
-		<Separator class="my-0" />
-		<div class="flex items-center p-2 gap-x-2">
-			{#if searchOpened}
-				<Input
+		{:else}
+			<TabNavigation
+				items={Object.entries(tabNavigation)}
+				textSelector={(i) => i[1]}
+				pathSelector={(i) =>
+					'/manage/tournaments' +
+					($page.params.tournament ? '/' + $page.params.tournament : '') +
+					'?filter=' +
+					i[0]}
+				match={0}
+				matchQuery="filter"
+				onchange={(e) => console.log('e', e)}
+				class="me-auto"
+			/>
+		{/if}
+		<Tooltip.Root openDelay={0}>
+			<Tooltip.Trigger asChild let:builder>
+				<Button
+					builders={[builder]}
+					variant="subtle"
+					icon={searchOpened ? icons.controls.clear : icons.controls.search}
 					label={$LL.general.search()}
-					placeholder={$LL.routes.manage.tournaments.searchForTournament()}
-					bind:value={searchValue}
-					class="flex-1"
+					hideLabel
+					onclick={() => (searchOpened = !searchOpened)}
 				/>
-			{:else}
-				<TabNavigation
-					items={Object.entries(tabNavigation)}
-					textSelector={(i) => i[1]}
-					pathSelector={(i) =>
-						'/manage/tournaments' +
-						($page.params.tournament && '/' + $page.params.tournament) +
-						'?filter=' +
-						i[0]}
-					match={0}
-					matchQuery="filter"
-					onchange={(e) => console.log('e', e)}
-					class="me-auto"
-				/>
-			{/if}
-			<Tooltip.Root openDelay={0}>
-				<Tooltip.Trigger asChild let:builder>
-					<Button
-						builders={[builder]}
-						variant="ghost"
-						size="icon"
-						icon={searchOpened ? icons.controls.clear : icons.controls.search}
-						label={$LL.general.search()}
-						hideLabel
-						onclick={() => (searchOpened = !searchOpened)}
-					/>
-				</Tooltip.Trigger>
-				<Tooltip.Content side="bottom" class="">
-					{$LL.general.search()}
-				</Tooltip.Content>
-			</Tooltip.Root>
-		</div>
-	</header>
-	<Separator class="my-0" />
-	<div class="flex flex-col gap-2 p-2">
+			</Tooltip.Trigger>
+			<Tooltip.Content side="bottom" class="">
+				{$LL.general.search()}
+			</Tooltip.Content>
+		</Tooltip.Root>
+	{/snippet}
+	{#snippet content()}
 		<Navigation
 			items={tournaments}
 			pathSelector={(i) => '/manage/tournaments/' + i.id + $page.url.search}
@@ -139,7 +133,7 @@
 		>
 			{#snippet children({ item, href, active })}
 				<Button
-					variant="ghost"
+					variant="subtle"
 					class="!justify-start !h-auto !gap-x-3 py-4"
 					{href}
 					label={item.name}
@@ -165,7 +159,6 @@
 				</Button>
 			{/snippet}
 		</Navigation>
-	</div>
-</Resizable.Pane>
-<Resizable.Handle withHandle />
+	{/snippet}
+</MiddlePane>
 {@render children()}

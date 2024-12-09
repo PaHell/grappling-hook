@@ -35,9 +35,9 @@
 	import type { WebviewWindow } from '@tauri-apps/api/webviewWindow';
 	import { onMount } from 'svelte';
 	import { invalidateAll } from '$app/navigation';
+	import { layoutSizes } from '../../index.js';
 
 	let { data } = $props();
-	let defaultLayout = [265, 440, 655];
 	let error: string | null = null;
 
 	type Tournament = InferSelectModel<typeof _tournaments>;
@@ -143,7 +143,7 @@
 	}
 </script>
 
-<Resizable.Pane defaultSize={defaultLayout[2]}>
+<Resizable.Pane defaultSize={$layoutSizes[2]}>
 	<div class="flex h-full flex-col">
 		<div class="flex items-center p-2">
 			<div class="flex items-center gap-2">
@@ -151,8 +151,7 @@
 					<Tooltip.Trigger onclick={openEdit} asChild let:builder>
 						<Button
 							builders={[builder]}
-							variant="ghost"
-							size="icon"
+							variant="transparent"
 							icon={icons.controls.edit}
 							label={$LL.crud.edit.editModel({
 								model: $LL.models.tournaments.general.label(1)
@@ -171,8 +170,7 @@
 					<Tooltip.Trigger asChild let:builder>
 						<Button
 							builders={[builder]}
-							variant="ghost"
-							size="icon"
+							variant="transparent"
 							icon={icons.controls.delete}
 							label={$LL.crud.delete.deleteModel({
 								model: $LL.models.tournaments.general.label(1)

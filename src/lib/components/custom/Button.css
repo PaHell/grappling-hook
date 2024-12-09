@@ -1,43 +1,109 @@
 .button {
       @apply inline-flex items-center justify-center
-      rounded-md gap-x-1
+      rounded-md gap-x-1 border border-transparent
       text-sm font-medium whitespace-nowrap
       transition-colors;
       /* Size */
-      &.button-small {
-            @apply h-8 px-2 text-xs;
+      &.button-size-default {
+            @apply h-8 px-3;
       }
-      &.button-medium {
-            @apply h-10 px-4;
+      &.button-size-large {
+            @apply h-12 px-4 text-base;
+            & > .icon {
+                  @apply text-[1.5rem];
+            }
       }
-      &.button-large {
-            @apply h-12 px-4;
+      /* Icon */
+      &:not(:has(> .icon)) {
+            @apply min-w-24;
       }
-      &.button-icon {
-            @apply h-9 w-9;
+      &:has(> .icon:first-child:last-child) {
+            @apply !px-0 aspect-square;
       }
       /* Color */
-      &.button-primary {
-            @apply bg-accent text-white;
-      }
-      &.button-secondary {
-            @apply bg-card text-white;
-      }
-      &.button-warning {
-            @apply bg-warning text-white;
-      }
-      &.button-danger {
-            @apply bg-danger text-white;
-      }
-      &.button-ghost {
-            @apply bg-transparent text-white;
+      &.button-variant-default {
+            @apply border-border/50 bg-foreground/5;
             &:hover,
             &:focus {
-                  @apply bg-white/5;
+                  @apply border-border bg-foreground/10;
+            }
+            &:active {
+                  @apply border-border/50 bg-background/10;
+            }
+            &.button-active {
+                  @apply border-border/50 bg-foreground/10;
+            }
+      }
+      &.button-variant-primary {
+            @apply bg-accent/90 border-accent/90;
+            &:hover,
+            &:focus {
+                  @apply border-accent bg-accent;
             }
             &:active,
-            &.active {
-                  @apply bg-white/10;
+            &.button-active {
+                  @apply bg-accent/60 border-accent/30;
             }
+      }
+      &.button-variant-outline {
+            @apply border-border/60;
+            &:hover,
+            &:focus,
+            &:active,
+            &.button-active {
+                  @apply border-border;
+            }
+      }
+      &.button-variant-subtle {
+            @apply border-transparent bg-transparent;
+            &:hover,
+            &:focus {
+                  @apply border-transparent bg-foreground/10;
+            }
+            &:active {
+                  @apply border-transparent bg-foreground/5;
+            }
+            &.button-active {
+                  @apply border-transparent bg-foreground/5;
+            }
+      }
+      &.button-variant-transparent {
+            @apply border-transparent bg-transparent;
+            &:hover,
+            &:focus {
+                  @apply text-accent;
+            }
+            &:active {
+                  @apply text-accent/80;
+            }
+            &.button-active {
+                  @apply text-accent;
+            }
+      }
+      &.button-variant-warning {
+            @apply bg-warning/90 border-warning/90;
+            &:hover,
+            &:focus {
+                  @apply border-warning bg-warning;
+            }
+            &:active,
+            &.button-active {
+                  @apply bg-warning/60 border-warning/30;
+            }
+      }
+      &.button-variant-danger {
+            @apply bg-danger/90 border-danger/90;
+            &:hover,
+            &:focus {
+                  @apply border-danger bg-danger;
+            }
+            &:active,
+            &.button-active {
+                  @apply bg-danger/60 border-danger/30;
+            }
+      }
+
+      &:disabled {
+            @apply cursor-not-allowed bg-foreground/10 border-border/25 text-secondary !important;
       }
 }

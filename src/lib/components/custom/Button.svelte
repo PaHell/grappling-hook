@@ -11,8 +11,8 @@
 		icon?: string;
 		label: string;
 		hideLabel?: boolean;
-		variant?: 'primary' | 'secondary' | 'warning' | 'danger' | 'ghost';
-		size?: 'small' | 'medium' | 'large' | 'icon';
+		variant?: 'default' | 'primary' | 'outline' | 'subtle' | 'transparent' | 'warning' | 'danger';
+		size?: 'default' | 'large';
 		active?: boolean;
 		class?: string;
 		builders?: Builder[] | undefined;
@@ -24,7 +24,7 @@
 		label,
 		hideLabel = false,
 		variant = 'primary',
-		size = 'medium',
+		size = 'default',
 		active = false,
 		class: classes,
 		builders,
@@ -35,7 +35,9 @@
 
 <ButtonPrimitive.Root
 	{builders}
-	class="button button-{size} button-{variant} {active ? 'active' : ''} {classes}"
+	class="button button-size-{size} button-variant-{variant} {active
+		? 'button-active'
+		: ''} {classes}"
 	type="button"
 	{...others}
 >

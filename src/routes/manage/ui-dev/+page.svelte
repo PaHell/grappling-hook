@@ -1,10 +1,10 @@
 <script lang="ts">
+	import { layoutSizes } from '..';
 	import RightPane from '../RightPane.svelte';
-	let { data } = $props();
 </script>
 
-<RightPane>
+<RightPane defaultSize={$layoutSizes[2]}>
 	{#snippet content()}
-		<p>Settings</p>
+		<p>UI DEV</p>
 	{/snippet}
 </RightPane>
