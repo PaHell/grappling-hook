@@ -1,0 +1,15 @@
+.collapsable-list-navigation {
+      @apply relative;
+      & > .indicator {
+            @apply w-1 absolute left-0 transition-[height] flex items-center;
+            & > div {
+                  @apply w-full h-1/2 bg-accent rounded-full;
+            }
+      }
+      & > .navigation {
+            & > .tab {
+                  & > .button {
+                  }
+            }
+      }
+}

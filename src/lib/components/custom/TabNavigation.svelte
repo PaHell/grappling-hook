@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Button from '$lib/components/custom/Button.svelte';
 	import Navigation, { type NavigationProperties } from '@/components/custom/Navigation.svelte';
+	import './TabNavigation.css';
 
 	type T = $$Generic;
 	let {
@@ -29,20 +30,9 @@
 	let refRoot: HTMLDivElement | undefined = $state(undefined);
 </script>
 
-<div bind:this={refRoot} class="tabs flex relative {classes}">
-	<div
-		class="h-1 bg-accent absolute bottom-0 rounded-full transition-all duration-200 ease-in-out"
-		style="width: {width}px; left: {offsetLeft}px;"
-	></div>
-	<Navigation
-		{items}
-		{pathSelector}
-		{match}
-		{matchQuery}
-		{onchange}
-		bind:active
-		class="tabs flex {classes}"
-	>
+<div bind:this={refRoot} class="tabs {classes}">
+	<div class="indicator" style="width: {width}px; left: {offsetLeft}px;"><div></div></div>
+	<Navigation {items} {pathSelector} {match} {matchQuery} {onchange} bind:active>
 		{#snippet children({ item, href, active })}
 			<div class="tab">
 				<Button variant="transparent" {href} {active} label={textSelector(item)} />

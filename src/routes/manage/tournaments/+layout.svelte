@@ -111,7 +111,7 @@
 			<Tooltip.Trigger asChild let:builder>
 				<Button
 					builders={[builder]}
-					variant="subtle"
+					variant="default"
 					icon={searchOpened ? icons.controls.clear : icons.controls.search}
 					label={$LL.general.search()}
 					hideLabel
@@ -129,12 +129,12 @@
 			pathSelector={(i) => '/manage/tournaments/' + i.id + $page.url.search}
 			match={3}
 			matchQuery="filter"
-			class="flex flex-col"
+			class="flex flex-col gap-y-px"
 		>
 			{#snippet children({ item, href, active })}
 				<Button
 					variant="subtle"
-					class="!justify-start !h-auto !gap-x-3 py-4"
+					class="!justify-start !h-auto !gap-x-3 !p-2"
 					{href}
 					label={item.name}
 					{active}
@@ -142,8 +142,8 @@
 					{#if item.img}
 						<img src={item.img} alt={item.name} class="max-h-12 max-w-12" />
 					{:else}
-						<div class="h-12 w-12 bg-white/5 flex items-center justify-center">
-							<Icon name={icons.models.tournament} class="text-2xl text-secondary" />
+						<div class="h-12 w-12 bg-foreground/5 rounded flex items-center justify-center">
+							<Icon name={icons.models.tournament} class="!text-2xl text-secondary" />
 						</div>
 					{/if}
 					<div>

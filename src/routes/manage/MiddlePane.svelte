@@ -19,22 +19,20 @@
 </script>
 
 <Resizable.Pane defaultSize={$layoutSizes[1]} minSize={25} maxSize={35}>
-	<header>
-		<div class="flex items-center p-2">
+	<header class="pt-1 pb-4">
+		<div class="flex items-center px-2">
 			<h1 class="ps-1 flex-1 text-xl font-bold truncate">{title}</h1>
 			{#if headerRight}
 				{@render headerRight()}
 			{/if}
 		</div>
 		{#if subNavigation}
-			<Separator class="my-0" />
-			<div class="flex items-center p-2 gap-x-2">
+			<div class="pe-2 flex items-center gap-x-2 mt-4">
 				{@render subNavigation()}
 			</div>
 		{/if}
 	</header>
-	<Separator class="my-0" />
-	<div class="flex flex-col gap-2 p-2">
+	<div class="flex flex-col gap-2 px-2">
 		{@render content()}
 	</div>
 </Resizable.Pane>

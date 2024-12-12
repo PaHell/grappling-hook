@@ -36,6 +36,8 @@
 	import { onMount } from 'svelte';
 	import { invalidateAll } from '$app/navigation';
 	import { layoutSizes } from '../../index.js';
+	import RightPane from '../../RightPane.svelte';
+	import { app } from '@tauri-apps/api';
 
 	let { data } = $props();
 	let error: string | null = null;
@@ -143,92 +145,103 @@
 	}
 </script>
 
-<Resizable.Pane defaultSize={$layoutSizes[2]}>
-	<div class="flex h-full flex-col">
-		<div class="flex items-center p-2">
-			<div class="flex items-center gap-2">
-				<Tooltip.Root openDelay={0} group>
-					<Tooltip.Trigger onclick={openEdit} asChild let:builder>
-						<Button
-							builders={[builder]}
-							variant="transparent"
-							icon={icons.controls.edit}
-							label={$LL.crud.edit.editModel({
-								model: $LL.models.tournaments.general.label(1)
-							})}
-							hideLabel
-							onclick={openEdit}
-						/>
-					</Tooltip.Trigger>
-					<Tooltip.Content
-						>{$LL.crud.edit.editModel({
-							model: $LL.models.tournaments.general.label(1)
-						})}</Tooltip.Content
-					>
-				</Tooltip.Root>
-				<Tooltip.Root openDelay={0} group>
-					<Tooltip.Trigger asChild let:builder>
-						<Button
-							builders={[builder]}
-							variant="transparent"
-							icon={icons.controls.delete}
-							label={$LL.crud.delete.deleteModel({
-								model: $LL.models.tournaments.general.label(1)
-							})}
-							hideLabel
-							onclick={askDelete}
-						/>
-					</Tooltip.Trigger>
-					<Tooltip.Content
-						>{$LL.crud.delete.deleteModel({
-							model: $LL.models.tournaments.general.label(1)
-						})}</Tooltip.Content
-					>
-				</Tooltip.Root>
-			</div>
-			<div class="ml-auto flex items-center gap-2">
+<RightPane>
+	{#snippet headerLeft()}
+		<Tooltip.Root openDelay={0} group>
+			<Tooltip.Trigger onclick={openEdit} asChild let:builder>
 				<Button
-					icon={icons.controls.play}
-					label={$LL.routes.manage.tournaments.play()}
-					onclick={playTournament}
+					builders={[builder]}
+					variant="default"
+					icon={icons.controls.edit}
+					label={$LL.crud.edit.editModel({
+						model: $LL.models.tournaments.general.label(1)
+					})}
+					hideLabel
+					onclick={openEdit}
 				/>
-			</div>
-		</div>
-		<Separator class="my-0" />
+			</Tooltip.Trigger>
+			<Tooltip.Content
+				>{$LL.crud.edit.editModel({
+					model: $LL.models.tournaments.general.label(1)
+				})}</Tooltip.Content
+			>
+		</Tooltip.Root>
+		<Tooltip.Root openDelay={0} group>
+			<Tooltip.Trigger asChild let:builder>
+				<Button
+					builders={[builder]}
+					variant="default"
+					icon={icons.controls.delete}
+					label={$LL.crud.delete.deleteModel({
+						model: $LL.models.tournaments.general.label(1)
+					})}
+					hideLabel
+					onclick={askDelete}
+				/>
+			</Tooltip.Trigger>
+			<Tooltip.Content
+				>{$LL.crud.delete.deleteModel({
+					model: $LL.models.tournaments.general.label(1)
+				})}</Tooltip.Content
+			>
+		</Tooltip.Root>
+	{/snippet}
+	{#snippet headerRight()}
+		<Button
+			icon={icons.controls.play}
+			label={$LL.routes.manage.tournaments.play()}
+			onclick={playTournament}
+		/>
+	{/snippet}
+	{#snippet subHeader()}
 		{#if data.tournament}
-			<div class="flex h-full flex-1 flex-col overflow-hidden">
-				<div class="flex items-start p-4">
-					<div class="flex items-center gap-4 text-sm">
-						<img src={data.tournament.img} alt={data.tournament.name} class="max-h-12 max-w-12" />
-						<div class="grid gap-0.5">
-							<div class="font-semibold">NAME: {data.tournament.name}</div>
-							<div class="line-clamp-1 text-xs">ID: {data.tournament.id}</div>
-						</div>
+			<div class="flex items-center gap-4 text-sm">
+				{#if data.tournament.img}
+					<img src={data.tournament.img} alt={data.tournament.name} class="max-h-12 max-w-12" />
+				{:else}
+					<div class="w-12 h-12 bg-foreground/5 rounded flex items-center justify-center">
+						<Icon name={icons.models.tournament} class="!text-2xl text-secondary" />
 					</div>
-					{#if data.tournament.dateOfMatch}
-						<div class="text-secondary ml-auto text-xs">
-							{$time(data.tournament.dateOfMatch.toUTCString()).fromNow()}
-						</div>
-					{/if}
-				</div>
-				<Separator />
-				<div class="flex-1 overflow-y-auto whitespace-pre-wrap p-4 text-sm">
-					{data.tournament.dateOfMatch}
-					<div class="grid">
-						<div class="bg-background">bg-background</div>
-						<div class="bg-card">bg-card</div>
-						<div class="text-primary">text-primary</div>
-						<div class="text-secondary">text-secondary</div>
-						<div class="bg-accent">bg-accent</div>
-						<div class="bg-accent-foreground">bg-accent-foreground</div>
-						<div class="bg-warning">bg-warning</div>
-						<div class="bg-warning-foreground">bg-warning-foreground</div>
-						<div class="bg-danger">bg-danger</div>
-						<div class="bg-danger-foreground">bg-danger-foreground</div>
-						<div class="bg-border">bg-border</div>
-					</div>
+				{/if}
+				<div class="grid gap-0.25">
+					<div class="text text-lg font-semibold">{data.tournament.name}</div>
+					<div class="text">ID: {data.tournament.id}</div>
 				</div>
 			</div>
+			{#if data.tournament.dateOfMatch}
+				<div class="text-secondary ml-auto text-xs">
+					{$time(data.tournament.dateOfMatch.toUTCString()).fromNow()}<br />
+					({$time(data.tournament.dateOfMatch.toUTCString()).format($LL.general.formats.date())})
+				</div>
+			{/if}
 		{/if}
-	</div>
-</Resizable.Pane>
+	{/snippet}
+	{#snippet content()}
+		{#if data.tournament}
+			{#each Array.from({ length: 3 }) as _, game}
+				<div class="h-[2px] bg-foreground/5"></div>
+				<div class="flex gap-4 relative">
+					<div class="grid grid-cols-[auto_1fr_1fr] gap-x-2 w-full items-start">
+						<h3 class="text text-lg leading-8">Game {game + 1}</h3>
+						{#each Array.from({ length: 2 }) as _, team}
+							<div class="grid grid-cols-[auto_1fr] gap-x-2 w-full">
+								<div
+									class="w-8 h-8 flex-shrink-0 bg-foreground/5 rounded flex items-center justify-center"
+								>
+									<Icon name={icons.models.game} class="!text-xl text-secondary" />
+								</div>
+								<h3 class="text text-lg leading-8">Team {team + 1}</h3>
+								{#each Array.from({ length: 5 }) as _, player}
+									<p class="col-start-2">Player {player + 1}</p>
+								{/each}
+							</div>
+						{/each}
+					</div>
+					<div class="absolute top-0 right-0">
+						<Button variant="default" icon={icons.controls.edit} label="Edit" onclick={openEdit} />
+					</div>
+				</div>
+			{/each}
+		{/if}
+	{/snippet}
+</RightPane>

@@ -2,6 +2,7 @@
 	import Button from '$lib/components/custom/Button.svelte';
 	import Navigation, { type NavigationProperties } from '@/components/custom/Navigation.svelte';
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
+	import './CollapsableListNavigation.css';
 
 	type T = $$Generic;
 	let {
@@ -12,7 +13,7 @@
 		match = 0,
 		matchQuery,
 		class: classes = '',
-		isCollapsed = $bindable(false),
+		isCollapsed = false,
 		onchange
 	}: NavigationProperties<T> & {
 		iconSelector?: (item: T) => string;
@@ -23,31 +24,30 @@
 	let active = $state(0);
 	let offsetTop = $state(0);
 	let height = $state(0);
-	$effect(() => {
+	$effect(update);
+
+	let refRoot: HTMLDivElement | undefined = $state(undefined);
+
+	function update() {
+		isCollapsed;
 		const offsetParent = refRoot?.getBoundingClientRect().top ?? 0;
 		const tabRect = refRoot
 			?.querySelector(`.tab:nth-child(${active + 1})`)
 			?.getBoundingClientRect();
 		offsetTop = tabRect ? tabRect.top - offsetParent : 0;
 		height = tabRect ? tabRect.height : 0;
-	});
-	let refRoot: HTMLDivElement | undefined = $state(undefined);
+	}
 </script>
 
-<div bind:this={refRoot} class="tabs relative {classes}">
+<div bind:this={refRoot} class="collapsable-list-navigation {classes}">
 	<div
-		class="w-1 bg-accent absolute left-0 rounded-full transition-all duration-200 ease-in-out"
+		class="indicator"
+		class:collapsed={isCollapsed}
 		style="height: {height}px; top: {offsetTop}px;"
-	></div>
-	<Navigation
-		{items}
-		{pathSelector}
-		{match}
-		{matchQuery}
-		{onchange}
-		bind:active
-		class="tabs {classes}"
 	>
+		<div></div>
+	</div>
+	<Navigation {items} {pathSelector} {match} {matchQuery} {onchange} bind:active>
 		{#snippet children({ item, href, active })}
 			<div class="tab">
 				{#if isCollapsed}
@@ -61,7 +61,6 @@
 								size="large"
 								icon={iconSelector?.(item)}
 								label={textSelector(item)}
-								class="!rounded-none"
 								hideLabel
 							/>
 						</Tooltip.Trigger>
@@ -74,7 +73,6 @@
 						{href}
 						{active}
 						variant="subtle"
-						size="large"
 						class="w-full !justify-start"
 						icon={iconSelector?.(item)}
 						label={textSelector(item)}

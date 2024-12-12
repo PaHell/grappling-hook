@@ -1,0 +1,39 @@
+.resizable-handle {
+      @apply w-3 h-full flex justify-center;
+      & > div {
+            @apply relative
+            flex items-center justify-center
+            w-[2px]
+            bg-foreground/5 transition-[width];
+      
+            & > div {
+                  @apply bg-foreground/10 z-10 flex h-6 rounded-full transition-all;
+            }
+      
+      }
+      &:hover,
+      &:focus,
+      &:active {
+            & > div {
+                  @apply w-3;
+                  & > div {
+                        @apply w-1/2;
+                  }
+            }
+      }
+
+      &:hover {
+            & > div {
+                  & > div {
+                      @apply bg-foreground/25;
+                  }
+            }
+      }
+      &:active {
+            & > div {
+                  & > div {
+                      @apply bg-foreground/50;
+                  }
+            }
+      }
+}

@@ -3,7 +3,7 @@
 	import RightPane from '../RightPane.svelte';
 </script>
 
-<RightPane defaultSize={$layoutSizes[2]}>
+<RightPane>
 	{#snippet content()}
 		<p>UI DEV</p>
 	{/snippet}

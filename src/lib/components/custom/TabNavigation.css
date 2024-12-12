@@ -1,0 +1,21 @@
+.tabs {
+      @apply flex relative;
+      & > .indicator {
+            @apply h-1 absolute bottom-[-2px] transition-all flex justify-center;
+            & > div {
+                  @apply w-[1.25rem] h-full bg-accent rounded-full;
+            }
+      }
+      & > .navigation {
+            @apply flex;
+            & > .tab > .button {
+                  @apply min-w-0 border-none rounded-none;
+                  &.button-active {
+                        @apply text-white;
+                  }
+                  &:not(.button-active):not(:hover) {
+                        @apply text-secondary;
+                  }
+            }
+      }
+}

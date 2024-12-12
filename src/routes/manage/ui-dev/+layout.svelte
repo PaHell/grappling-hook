@@ -29,7 +29,7 @@
 	];
 </script>
 
-<MiddlePane defaultSize={$layoutSizes[1]} title={$LL.models.settings.general.label()}>
+<MiddlePane title={$LL.models.settings.general.label()}>
 	{#snippet headerRight()}{/snippet}
 	{#snippet content()}
 		<Navigation items={sidebarItems} pathSelector={(i) => i.path} match={0} class="flex flex-col">

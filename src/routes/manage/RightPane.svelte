@@ -18,11 +18,11 @@
 </script>
 
 <Resizable.Pane defaultSize={$layoutSizes[2]}>
-	<div class="h-full flex flex-col overflow-auto">
+	<div class="h-full flex flex-col overflow-auto ps-2 pe-3 pt-1">
 		{#if headerLeft || headerRight || subHeader}
-			<header class="flex flex-col">
+			<header class="flex flex-col pb-4">
 				{#if headerLeft || headerRight}
-					<div class="flex items-center p-2">
+					<div class="flex items-center">
 						<div class="flex items-center gap-2">
 							{#if headerLeft}
 								{@render headerLeft()}
@@ -36,17 +36,14 @@
 					</div>
 				{/if}
 				{#if subHeader}
-					<Separator class="my-0" />
-					<div class="flex items-center p-2 gap-x-2">
+					<div class="flex items-center mt-4 gap-x-2">
 						{@render subHeader()}
 					</div>
 				{/if}
 			</header>
-			<Separator class="my-0" />
 		{/if}
-		<div class="flex flex-col gap-2 p-2 overflow-auto">
+		<div class="flex flex-col gap-4">
 			{@render content()}
 		</div>
 	</div>
 </Resizable.Pane>
-<Resizable.Handle withHandle />

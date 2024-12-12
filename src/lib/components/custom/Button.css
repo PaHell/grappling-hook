@@ -22,16 +22,16 @@
       }
       /* Color */
       &.button-variant-default {
-            @apply border-border/50 bg-foreground/5;
+            @apply border-foreground/[2.5%] bg-foreground/5;
             &:hover,
             &:focus {
-                  @apply border-border bg-foreground/10;
+                  @apply border-foreground/5 bg-foreground/10;
             }
             &:active {
-                  @apply border-border/50 bg-background/10;
+                  @apply border-background/50 bg-foreground/5;
             }
             &.button-active {
-                  @apply border-border/50 bg-foreground/10;
+                  @apply border-foreground/5 bg-foreground/10;
             }
       }
       &.button-variant-primary {
@@ -58,10 +58,10 @@
             @apply border-transparent bg-transparent;
             &:hover,
             &:focus {
-                  @apply border-transparent bg-foreground/10;
+                  @apply border-foreground/5 bg-foreground/10;
             }
             &:active {
-                  @apply border-transparent bg-foreground/5;
+                  @apply border-background/50 bg-foreground/5;
             }
             &.button-active {
                   @apply border-transparent bg-foreground/5;

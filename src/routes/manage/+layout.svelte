@@ -18,7 +18,7 @@
 	import { layoutSizes } from '.';
 
 	let isCollapsed = $state(false);
-	let navCollapsedSize = 4;
+	let navCollapsedSize = 5;
 	let { data, children } = $props();
 
 	type SidebarItem = {
@@ -69,8 +69,9 @@
 	}
 
 	function onLayoutChange(sizes: number[]) {
+		if (sizes.length !== 3) return;
 		console.log('Layout change', sizes);
-		if (sizes.length === 3) layoutSizes.set(sizes);
+		layoutSizes.set([sizes[0], sizes[1], sizes[2]]);
 	}
 
 	function onCollapse() {
@@ -86,7 +87,6 @@
 
 <Resizable.PaneGroup direction="horizontal" {onLayoutChange} class="h-full items-stretch">
 	<Resizable.Pane
-		defaultSize={$layoutSizes[0]}
 		collapsedSize={navCollapsedSize}
 		collapsible
 		minSize={21}
@@ -105,7 +105,6 @@
 				<h5 class="font-branding text-lg h-7">{APP_NAME}</h5>
 			{/if}
 		</div>
-		<Separator class="mb-0" />
 		<div
 			data-collapsed={isCollapsed}
 			class="group flex flex-col gap-4 py-2 data-[collapsed=true]:py-2"
