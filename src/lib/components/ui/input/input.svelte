@@ -6,6 +6,7 @@
 
 	type $$Props = HTMLInputAttributes & {
 		label: string;
+		hideLabel?: boolean;
 	};
 	type $$Events = InputEvents;
 
@@ -13,6 +14,7 @@
 	export let id: $$Props['id'] = undefined;
 	export let value: $$Props['value'] = undefined;
 	export let label: $$Props['label'];
+	export let hideLabel = false;
 	export { className as class };
 
 	// Workaround for https://github.com/sveltejs/svelte/issues/9305
@@ -23,7 +25,9 @@
 </script>
 
 <div class="input {className}">
-	<label for={id ?? inputId}>{label}</label>
+	{#if !hideLabel}
+		<label for={id ?? inputId}>{label}</label>
+	{/if}
 	<input
 		id={id ?? inputId}
 		bind:value

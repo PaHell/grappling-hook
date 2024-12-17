@@ -6,6 +6,9 @@
       /* Size */
       &.button-size-default {
             @apply h-8 px-3;
+            & > span {
+                  @apply mt-0.5;
+            }
       }
       &.button-size-large {
             @apply h-12 px-4 text-base;

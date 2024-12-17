@@ -85,7 +85,7 @@
 	}
 </script>
 
-<Resizable.PaneGroup direction="horizontal" {onLayoutChange} class="h-full items-stretch">
+<Resizable.PaneGroup direction="horizontal" {onLayoutChange} class="h-full items-stretch px-1">
 	<Resizable.Pane
 		collapsedSize={navCollapsedSize}
 		collapsible
@@ -94,13 +94,8 @@
 		{onCollapse}
 		{onExpand}
 	>
-		<div
-			class={cn(
-				'flex h-[52px] gap-x-1.5 items-center justify-center',
-				isCollapsed ? 'h-[52px]' : 'px-2'
-			)}
-		>
-			<Icon name={icons.app} />
+		<div class="flex h-[52px] gap-x-1.5 items-center justify-center">
+			<Icon name={icons.app} class="icon-large" />
 			{#if !isCollapsed}
 				<h5 class="font-branding text-lg h-7">{APP_NAME}</h5>
 			{/if}

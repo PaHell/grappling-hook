@@ -218,30 +218,32 @@
 	{/snippet}
 	{#snippet content()}
 		{#if data.tournament}
-			{#each Array.from({ length: 3 }) as _, game}
-				<div class="h-[2px] bg-foreground/5"></div>
-				<div class="flex gap-4 relative">
-					<div class="grid grid-cols-[auto_1fr_1fr] gap-x-2 w-full items-start">
-						<h3 class="text text-lg leading-8">Game {game + 1}</h3>
-						{#each Array.from({ length: 2 }) as _, team}
-							<div class="grid grid-cols-[auto_1fr] gap-x-2 w-full">
-								<div
-									class="w-8 h-8 flex-shrink-0 bg-foreground/5 rounded flex items-center justify-center"
-								>
-									<Icon name={icons.models.game} class="!text-xl text-secondary" />
+			<div class="flex items-center">
+				{#each Array.from({ length: 3 }) as _, stage}
+					<div class="min-w-48">
+						{#each Array.from({ length: 3 - stage }) as _, game}
+							<div class="flex items-center space-x-2 p-4">
+								<h3 class="text text-lg leading-8">
+									{stage * (4 - stage) + (game + 1)}.
+								</h3>
+								<div class="space-y-2 flex-1">
+									{#each Array.from({ length: 2 }) as _, team}
+										<div class="flex gap-x-2 w-full items-center">
+											<div
+												class="w-8 h-8 flex-shrink-0 bg-foreground/5 rounded flex items-center justify-center"
+											>
+												<Icon name={icons.models.game} class="!text-xl text-secondary" />
+											</div>
+											<h3 class="text text-lg leading-8 flex-1">Team {team + 1}</h3>
+											<p>0</p>
+										</div>
+									{/each}
 								</div>
-								<h3 class="text text-lg leading-8">Team {team + 1}</h3>
-								{#each Array.from({ length: 5 }) as _, player}
-									<p class="col-start-2">Player {player + 1}</p>
-								{/each}
 							</div>
 						{/each}
 					</div>
-					<div class="absolute top-0 right-0">
-						<Button variant="default" icon={icons.controls.edit} label="Edit" onclick={openEdit} />
-					</div>
-				</div>
-			{/each}
+				{/each}
+			</div>
 		{/if}
 	{/snippet}
 </RightPane>

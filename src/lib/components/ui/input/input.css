@@ -1,41 +1,33 @@
 .input {
-      @apply relative h-10 border-2 border-transparent bg-accent-foreground/5 rounded-md transition-colors duration-200 ease-in-out;
+      @apply relative;
       
       &:after {
             content: "";
-            @apply block absolute w-0 h-[2px] -mt-[2px] mx-2 bg-primary rounded-full transition-[width] duration-200 ease-in-out;
+            @apply block absolute w-0 h-[2px] -mt-[2px] mx-2 bg-accent rounded-full transition-[width] duration-200 ease-in-out;
       }
       & > label {
-            @apply block absolute
-            w-full h-6 mt-1.5 leading-6 px-3 text-base
+            @apply w-full h-6 mt-1.5 leading-6 px-3
             transition-all duration-200 ease-in-out
-            text-secondary
+            text-white text-xs tracking-wider font-semibold uppercase
             select-none pointer-events-none;
       }
       
       & > input {
-            @apply placeholder:text-transparent flex h-full w-full rounded-md bg-transparent px-3 pt-1 pb-0 focus-visible:outline-none disabled:cursor-not-allowed autofill:bg-transparent;
+            @apply placeholder:text-secondary flex h-8 w-full
+            px-3 pt-0.5 pb-0
+            border border-foreground/5 bg-foreground/5 rounded-md transition-colors duration-200 ease-in-out
+            focus-visible:outline-none disabled:cursor-not-allowed autofill:bg-transparent;
+            &:hover {
+                  @apply border-foreground/5 bg-foreground/10;
+            }
+            &:focus {
+                  @apply border-foreground/10 bg-background/20;
+            }
       }
 
-      &:hover {
-            @apply bg-accent-foreground/10;
-      }
-      
       &:has(> input:focus) {
             &:after {
                   @apply w-[calc(100%_-_1rem)];
-            }
-      }
-      &:has(> input:focus),
-      &:has(> input:not(:placeholder-shown)) {
-            @apply bg-black/20 border-white/10;
-
-            & > label {
-                  @apply -mt-2 text-white text-xs tracking-wider font-semibold uppercase;
-            }
-
-            & > input {
-                  @apply placeholder:text-secondary;
             }
       }
 }

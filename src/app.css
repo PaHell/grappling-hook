@@ -54,10 +54,3 @@
     @apply text-primary font-sans antialiased;
   }
 }
-
-.icon {
-      @apply text-center;
-      font-size: 1.25rem;
-      line-height: 1;
-      font-weight: normal;
-}

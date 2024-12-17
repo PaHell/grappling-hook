@@ -12,7 +12,7 @@
 	import * as Tabs from '$lib/components/ui/tabs/index.js';
 	import { db } from '$lib/database';
 	import { tournaments as _tournaments, TableNames } from '$lib/database/schema';
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import { eq, type InferSelectModel } from 'drizzle-orm';
 	import LL from '$i18n/i18n-svelte.js';
 	import icons from '@/icons.js';
@@ -28,6 +28,7 @@
 	import time from '@/time.js';
 	import TabNavigation from '@/components/custom/TabNavigation.svelte';
 	import MiddlePane from '../MiddlePane.svelte';
+	import tournamentQueries from '@/queries/tournaments.js';
 
 	type Tournament = InferSelectModel<typeof _tournaments>;
 
@@ -37,39 +38,33 @@
 	let searchOpened = $state(false);
 	let searchValue = $state('');
 
+	const { getAll, useCreate } = tournamentQueries(data.queryClient);
+	const unsubGetAll = getAll.subscribe((res) => {
+		if (!res.data) return;
+		console.log('res.data', JSON.stringify(res.data, null, 4));
+		tournaments = res.data;
+	});
+
 	const tabNavigation: Record<TournamentFilter, string> = {
 		[TournamentFilter.All]: 'All',
 		[TournamentFilter.Upcoming]: 'Upcoming',
 		[TournamentFilter.Past]: 'Past'
 	};
 
-	onMount(async () => {
-		await reloadTournaments();
-		console.log({ tournaments });
+	onDestroy(() => {
+		unsubGetAll();
 	});
-
-	async function reloadTournaments() {
-		error = null;
-		try {
-			tournaments = await db.select().from(_tournaments);
-		} catch (e) {
-			error = errorToString(e);
-		}
-	}
 
 	async function onAddTournament() {
 		error = null;
 		try {
-			const result = await db
-				.insert(_tournaments)
-				.values({
-					img: null,
-					name: 'New Tournament',
-					dateOfMatch: new Date()
-				})
-				.returning();
+			const result = await get(useCreate).mutateAsync({
+				img: null,
+				name: 'New Tournament',
+				dateOfMatch: new Date()
+			});
 			console.log({ result });
-			tournaments = [...tournaments, ...result];
+			tournaments = [...tournaments, result];
 		} catch (e) {
 			error = errorToString(e);
 		}
@@ -91,6 +86,7 @@
 				placeholder={$LL.routes.manage.tournaments.searchForTournament()}
 				bind:value={searchValue}
 				class="flex-1"
+				hideLabel
 			/>
 		{:else}
 			<TabNavigation
@@ -140,16 +136,18 @@
 					{active}
 				>
 					{#if item.img}
-						<img src={item.img} alt={item.name} class="max-h-12 max-w-12" />
+						<img src={item.img} alt={item.name} class="max-h-12 max-w-12 flex-shrink-0" />
 					{:else}
-						<div class="h-12 w-12 bg-foreground/5 rounded flex items-center justify-center">
+						<div
+							class="h-12 w-12 bg-foreground/5 rounded flex-shrink-0 flex items-center justify-center"
+						>
 							<Icon name={icons.models.tournament} class="!text-2xl text-secondary" />
 						</div>
 					{/if}
-					<div>
-						<h5 class="text">{item.name}</h5>
+					<div class="overflow-hidden">
+						<h5 class="text truncate">{item.name}</h5>
 						{#if item.dateOfMatch}
-							<p class="text text-sm">
+							<p class="text text-sm truncate">
 								{$time(item.dateOfMatch).fromNow()} ({$time(item.dateOfMatch).format(
 									$LL.general.formats.date()
 								)})
