@@ -3,6 +3,7 @@
 	import type { InputEvents } from './index.js';
 	import { cn, uuid } from '$lib/utils.js';
 	import './input.css';
+	import { onMount } from 'svelte';
 
 	type $$Props = HTMLInputAttributes & {
 		label: string;
@@ -15,6 +16,7 @@
 	export let value: $$Props['value'] = undefined;
 	export let label: $$Props['label'];
 	export let hideLabel = false;
+	export let autofocus = undefined;
 	export { className as class };
 
 	// Workaround for https://github.com/sveltejs/svelte/issues/9305
@@ -22,6 +24,14 @@
 	export let readonly: $$Props['readonly'] = undefined;
 
 	let inputId = uuid();
+
+	onMount(() => {
+		if (autofocus) {
+			const input = document.getElementById(inputId);
+			if (!input) return;
+			input.focus();
+		}
+	});
 </script>
 
 <div class="input {className}">

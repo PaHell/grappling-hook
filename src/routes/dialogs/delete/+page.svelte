@@ -38,7 +38,7 @@
 			<p class="text-secondary text-sm">{data.detail}</p>
 		</div>
 		<div class="flex items-center justify-end space-x-2">
-			<Button label={data.deny} onclick={() => sendDialogEvent(false)} variant="default" />
+			<Button label={data.deny} onclick={() => sendDialogEvent(false)} />
 			<Button label={data.confirm} onclick={() => sendDialogEvent(true)} variant="danger" />
 		</div>
 	</div>

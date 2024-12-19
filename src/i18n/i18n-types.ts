@@ -51,6 +51,22 @@ type RootTranslation = {
 		}
 	}
 	crud: {
+		create: {
+			/**
+			 * C​r​e​a​t​e​ ​n​e​w​ ​{​m​o​d​e​l​}
+			 * @param {unknown} model
+			 */
+			createNewModel: RequiredParams<'model'>
+			/**
+			 * D​i​s​c​a​r​d
+			 */
+			discard: string
+			/**
+			 * C​r​e​a​t​e​ ​{​m​o​d​e​l​}
+			 * @param {unknown} model
+			 */
+			createModel: RequiredParams<'model'>
+		}
 		edit: {
 			/**
 			 * E​d​i​t​ ​{​m​o​d​e​l​}​ ​"​{​i​t​e​m​}​"
@@ -129,7 +145,11 @@ type RootTranslation = {
 				/**
 				 * N​o​ ​t​o​u​r​n​a​m​e​n​t​{​{​s​}​}
 				 */
-				none: string
+				empty: string
+				/**
+				 * N​o​ ​t​o​u​r​n​a​m​e​n​t​ ​s​e​l​e​c​t​e​d
+				 */
+				noneSelected: string
 			}
 			img: {
 				/**
@@ -171,7 +191,7 @@ type RootTranslation = {
 				/**
 				 * N​o​ ​t​e​a​m​{​{​s​}​}
 				 */
-				none: string
+				empty: string
 			}
 		}
 		games: {
@@ -183,7 +203,7 @@ type RootTranslation = {
 				/**
 				 * N​o​ ​g​a​m​e​{​{​s​}​}
 				 */
-				none: string
+				empty: string
 			}
 		}
 		players: {
@@ -195,7 +215,7 @@ type RootTranslation = {
 				/**
 				 * N​o​ ​p​l​a​y​e​r​{​{​s​}​}
 				 */
-				none: string
+				empty: string
 			}
 		}
 		settings: {
@@ -207,7 +227,7 @@ type RootTranslation = {
 				/**
 				 * N​o​ ​s​e​t​t​i​n​g​s
 				 */
-				none: string
+				empty: string
 			}
 		}
 	}
@@ -271,6 +291,20 @@ export type TranslationFunctions = {
 		}
 	}
 	crud: {
+		create: {
+			/**
+			 * Create new {model}
+			 */
+			createNewModel: (arg: { model: unknown }) => LocalizedString
+			/**
+			 * Discard
+			 */
+			discard: () => LocalizedString
+			/**
+			 * Create {model}
+			 */
+			createModel: (arg: { model: unknown }) => LocalizedString
+		}
 		edit: {
 			/**
 			 * Edit {model} "{item}"
@@ -342,7 +376,11 @@ export type TranslationFunctions = {
 				/**
 				 * No tournament{{s}}
 				 */
-				none: (arg0: number | string | boolean) => LocalizedString
+				empty: (arg0: number | string | boolean) => LocalizedString
+				/**
+				 * No tournament selected
+				 */
+				noneSelected: () => LocalizedString
 			}
 			img: {
 				/**
@@ -384,7 +422,7 @@ export type TranslationFunctions = {
 				/**
 				 * No team{{s}}
 				 */
-				none: (arg0: number | string | boolean) => LocalizedString
+				empty: (arg0: number | string | boolean) => LocalizedString
 			}
 		}
 		games: {
@@ -396,7 +434,7 @@ export type TranslationFunctions = {
 				/**
 				 * No game{{s}}
 				 */
-				none: (arg0: number | string | boolean) => LocalizedString
+				empty: (arg0: number | string | boolean) => LocalizedString
 			}
 		}
 		players: {
@@ -408,7 +446,7 @@ export type TranslationFunctions = {
 				/**
 				 * No player{{s}}
 				 */
-				none: (arg0: number | string | boolean) => LocalizedString
+				empty: (arg0: number | string | boolean) => LocalizedString
 			}
 		}
 		settings: {
@@ -420,7 +458,7 @@ export type TranslationFunctions = {
 				/**
 				 * No settings
 				 */
-				none: () => LocalizedString
+				empty: () => LocalizedString
 			}
 		}
 	}

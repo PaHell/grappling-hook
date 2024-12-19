@@ -1,13 +1,15 @@
 <script lang="ts">
-	import * as Resizable from '$lib/components/ui/resizable/index.js';
-	import { layoutSizes } from '..';
+	import icons from '@/icons';
+	import EmptyRightPaneContent from '../EmptyRightPaneContent.svelte';
 	import RightPane from '../RightPane.svelte';
+	import LL from '$i18n/i18n-svelte';
 </script>
 
 <RightPane>
 	{#snippet content()}
-		<div class="flex h-full flex-col">
-			<h4>No tournament selected.</h4>
-		</div>
+		<EmptyRightPaneContent
+			icon={icons.models.tournament}
+			text={$LL.models.tournaments.general.noneSelected()}
+		/>
 	{/snippet}
 </RightPane>

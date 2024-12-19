@@ -1,5 +1,4 @@
 import { createMutation, createQuery, type QueryClient } from "@tanstack/svelte-query";
-import { env } from "$env/dynamic/public";
 import { eq, type InferInsertModel, type InferSelectModel } from "drizzle-orm";
 import { tournaments as _tournaments } from "../database/schema";
 import { db } from "@/database";
@@ -8,7 +7,31 @@ const queryKey = 'tournaments';
 type Tournament = InferSelectModel<typeof _tournaments>;
 type TournamentInsert = InferInsertModel<typeof _tournaments>;
 
-export default (queryClient: QueryClient) => ({
+const functions = {
+      getAll: () => db.select().from(_tournaments).all(),
+      getById: async (tournamentId: Tournament["id"]) => (await db.select().from(_tournaments).where(eq(_tournaments.id, tournamentId)))[0]
+}
+
+export const tournamentQueries = (queryClient: QueryClient) => ({
+      getAll: () => createQuery({
+            queryKey: [queryKey],
+            queryFn: () => functions.getAll()
+      }),
+      prefetchAll: () => queryClient.prefetchQuery({
+            queryKey: [queryKey],
+            queryFn: () => functions.getAll()
+      }),
+      getById: (tournamentId: Tournament["id"]) => createQuery({
+            queryKey: [queryKey, tournamentId],
+            queryFn: ({ queryKey }) => functions.getById(queryKey[1])
+      }),
+      prefetchById: (tournamentId: Tournament["id"]) => queryClient.prefetchQuery({
+            queryKey: [queryKey, tournamentId],
+            queryFn: ({ queryKey }) => functions.getById(queryKey[1])
+      }),
+});
+
+export const tournamentMutations = (queryClient: QueryClient) => ({
       // Create
       useCreate: createMutation<Tournament, Error, TournamentInsert>({
             mutationFn: async (data) => (await db
@@ -22,21 +45,13 @@ export default (queryClient: QueryClient) => ({
                   queryClient.setQueryData<Tournament>([queryKey, data.id], data);
             }
       }),
-      // Read
-      getAll: createQuery({
-            queryKey: [queryKey],
-            queryFn: () => db.select().from(_tournaments).all()
-      }),
-      getById: (tournamentId: Tournament["id"]) => createQuery({
-            queryKey: [queryKey, tournamentId],
-            queryFn: ({ queryKey }) => db.select().from(_tournaments).where(eq(_tournaments.id, queryKey[1]))
-      }),
       // Update
-      useUpdate: createMutation<Tournament, Error, { tournamentId: Tournament["id"], data: Tournament }>({
-            mutationFn: ({ tournamentId, data }) => db
+      useUpdate: createMutation<Tournament, Error, { tournamentId: Tournament["id"], data: TournamentInsert }>({
+            mutationFn: async ({ tournamentId, data }) => (await db
                   .update(_tournaments)
                   .set(data)
-                  .where(eq(_tournaments.id, tournamentId)),
+                  .where(eq(_tournaments.id, tournamentId))
+                  .returning())[0],
             onSuccess: (data) => {
                   queryClient.setQueryData<Tournament[]>([queryKey], curr => {
                         return curr?.map((item) => item.id === data.id ? data : item);

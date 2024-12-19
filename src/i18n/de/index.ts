@@ -21,6 +21,11 @@ const de = {
 		},
 	},
 	crud: {
+		create: {
+			createNewModel: 'Neues {model} erstellen',
+			discard: 'Verwerfen',
+			createModel: '{model} erstellen',
+		},
 		edit: {
 			editModelItem: '{model} \"{item}\" bearbeiten',
 			editModel: '{model} bearbeiten',
@@ -47,7 +52,8 @@ const de = {
 		[TableNames.Tournaments]: {
 			general: {
 				label: 'Turnier{{e}}',
-				none: 'Keine Turniere',
+				empty: 'Keine Turniere',
+				noneSelected: 'Kein Turnier ausgewählt',
 			},
 			img: {
 				label: 'Bild',
@@ -65,25 +71,25 @@ const de = {
 		[TableNames.Teams]: {
 			general: {
 				label: 'Team{{s}}',
-				none: 'No team{{s}}',
+				empty: 'No team{{s}}',
 			}
 		} satisfies ModelTranslation<InferSelectModel<typeof teams>>,
 		[TableNames.Games]: {
 			general: {
 				label: 'Spiel{{e}}',
-				none: 'Keine Spiele',
+				empty: 'Keine Spiele',
 			}
 		} satisfies ModelTranslation<InferSelectModel<typeof games>>,
 		[TableNames.Players]: {
 			general: {
 				label: 'Spieler',
-				none: 'Keine Spieler',
+				empty: 'Keine Spieler',
 			}
 		} satisfies ModelTranslation<InferSelectModel<typeof players>>,
 		[TableNames.Settings]: {
 			general: {
 				label: 'Einstellungen',
-				none: 'Keine Einstellungen',
+				empty: 'Keine Einstellungen',
 			}
 		} satisfies ModelTranslation<InferSelectModel<typeof players>>
 	},

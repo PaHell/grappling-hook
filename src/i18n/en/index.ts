@@ -21,6 +21,11 @@ const en = {
 		},
 	},
 	crud: {
+		create: {
+			createNewModel: 'Create new {model}',
+			discard: 'Discard',
+			createModel: 'Create {model}',
+		},
 		edit: {
 			editModelItem: 'Edit {model} \"{item}\"',
 			editModel: 'Edit {model}',
@@ -47,7 +52,8 @@ const en = {
 		[TableNames.Tournaments]: {
 			general: {
 				label: 'Tournament{{s}}',
-				none: 'No tournament{{s}}',
+				empty: 'No tournament{{s}}',
+				noneSelected: 'No tournament selected',
 			},
 			img: {
 				label: 'Image',
@@ -61,30 +67,29 @@ const en = {
 				label: 'Date of Match',
 				placeholder: '2012-12-21',
 			},
-
 		} satisfies ModelTranslation<InferSelectModel<typeof tournaments>>,
 		[TableNames.Teams]: {
 			general: {
 				label: 'Team{{s}}',
-				none: 'No team{{s}}',
+				empty: 'No team{{s}}',
 			}
 		} satisfies ModelTranslation<InferSelectModel<typeof teams>>,
 		[TableNames.Games]: {
 			general: {
 				label: 'Game{{s}}',
-				none: 'No game{{s}}',
+				empty: 'No game{{s}}',
 			}
 		} satisfies ModelTranslation<InferSelectModel<typeof games>>,
 		[TableNames.Players]: {
 			general: {
 				label: 'Player{{s}}',
-				none: 'No player{{s}}',
+				empty: 'No player{{s}}',
 			}
 		} satisfies ModelTranslation<InferSelectModel<typeof players>>,
 		[TableNames.Settings]: {
 			general: {
 				label: 'Settings',
-				none: 'No settings',
+				empty: 'No settings',
 			}
 		} satisfies ModelTranslation<InferSelectModel<typeof players>>
 	},
