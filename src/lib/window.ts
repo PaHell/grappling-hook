@@ -11,7 +11,7 @@ export function createWindow(label: string, blurredBackground: boolean, options:
                   ...options,
                   transparent: blurredBackground,
                   windowEffects: {
-                        effects: blurredBackground ? [Effect.Mica, Effect.Acrylic, Effect.Blur, Effect.WindowBackground] : [],
+                        effects: blurredBackground ? [Effect.Sidebar, Effect.Mica, Effect.Acrylic, Effect.Blur, Effect.WindowBackground] : [],
                         ...options.windowEffects
                   },
             });

@@ -47,11 +47,16 @@ export const tournamentMutations = (queryClient: QueryClient) => ({
       }),
       // Update
       useUpdate: createMutation<Tournament, Error, { tournamentId: Tournament["id"], data: TournamentInsert }>({
-            mutationFn: async ({ tournamentId, data }) => (await db
-                  .update(_tournaments)
-                  .set(data)
-                  .where(eq(_tournaments.id, tournamentId))
-                  .returning())[0],
+            mutationFn: async ({ tournamentId, data }) => {
+                  console.log({ tournamentId, data });
+                  const result = await db
+                        .update(_tournaments)
+                        .set(data)
+                        .where(eq(_tournaments.id, tournamentId))
+                        .returning();
+                  console.log({ result });
+                  return result[0];
+            },
             onSuccess: (data) => {
                   queryClient.setQueryData<Tournament[]>([queryKey], curr => {
                         return curr?.map((item) => item.id === data.id ? data : item);

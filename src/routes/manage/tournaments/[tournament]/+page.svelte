@@ -55,8 +55,11 @@
 				tournament
 			);
 			await get(useUpdate).mutateAsync({
-				...updated,
-				dateOfMatch: updated.dateOfMatch ? new Date(updated.dateOfMatch) : null
+				tournamentId: data.tournamentId,
+				data: {
+					...updated,
+					dateOfMatch: updated.dateOfMatch ? new Date(updated.dateOfMatch) : null
+				}
 			});
 		} catch (e) {
 			error = errorToString(e);
