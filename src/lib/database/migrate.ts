@@ -1,4 +1,4 @@
-import { readDir, readTextFile, BaseDirectory } from "@tauri-apps/plugin-fs";
+import { readDir, BaseDirectory, readFile } from "@tauri-apps/plugin-fs";
 import { loadDatabase } from "./index";
 
 export type ProxyMigrator = (migrationQueries: string[]) => Promise<void>;
@@ -26,6 +26,8 @@ export async function migrate() {
             return 0;
       });
 
+      console.log(`Found migrations: ${migrations.map(i => i.name).join(", ")}`)
+
       const migrationTableCreate = /*sql*/ `
 		CREATE TABLE IF NOT EXISTS "__drizzle_migrations" (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -44,15 +46,16 @@ export async function migrate() {
             )) as unknown as { id: number; hash: string; created_at: number }[];
 
             const hasBeenRun = (hash: string) =>
-                  dbMigrations.find((dbMigration) => {
+                  !!dbMigrations.find((dbMigration) => {
                         return dbMigration?.hash === hash;
                   });
 
-            if (hash && hasBeenRun(hash) === undefined) {
-                  const sql = await readTextFile("migrations/" + migration.name, { baseDir: BaseDirectory.Resource });
-
-                  sqlite.execute(sql, []);
-                  sqlite.execute(
+            if (!hasBeenRun(hash)) {
+                  console.log("executing sql file from:" + "migrations/" + migration.name)
+                  const fileContents = await readFile("migrations/" + migration.name, { baseDir: BaseDirectory.Resource });
+                  const sql = new TextDecoder().decode(fileContents);
+                  await sqlite.execute(sql);
+                  await sqlite.execute(
         /*sql*/ `INSERT INTO "__drizzle_migrations" (hash, created_at) VALUES ($1, $2)`,
                         [hash, Date.now()]
                   );
