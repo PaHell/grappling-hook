@@ -1,45 +1,35 @@
 <script lang="ts">
-	import * as Resizable from '$lib/components/ui/resizable/index.js';
-	import { Separator } from '$lib/components/ui/select/index.js';
-	import { APP_NAME } from '$env/static/public';
 	import Icon from '@/components/custom/Icon.svelte';
 	import Button from '$lib/components/custom/Button.svelte';
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
-	import { cn } from '$lib/utils.js';
-	import { Badge } from '$lib/components/ui/badge/index.js';
-	import { ScrollArea } from '$lib/components/ui/scroll-area/index.js';
 	import { Input } from '$lib/components/ui/input/index.js';
-	import * as Tabs from '$lib/components/ui/tabs/index.js';
-	import { db } from '$lib/database';
 	import { tournaments as _tournaments, TableNames } from '$lib/database/schema';
-	import { onDestroy, onMount } from 'svelte';
-	import { eq, type InferSelectModel } from 'drizzle-orm';
+	import { onDestroy } from 'svelte';
+	import { type InferSelectModel } from 'drizzle-orm';
 	import LL from '$i18n/i18n-svelte.js';
 	import icons from '@/icons.js';
 	import Navigation from '@/components/custom/Navigation.svelte';
-	import { ask } from '@tauri-apps/plugin-dialog';
 	import { get } from 'svelte/store';
 	import { page } from '$app/stores';
-	import { goto } from '$app/navigation';
 	import { TournamentFilter } from './index.js';
-	import { createDeleteDialog, createWindow } from '@/window.js';
-	import { window } from '@tauri-apps/api';
+	import { createFormDialog } from '@/window.js';
 	import { errorToString } from '@/error.js';
 	import time from '@/time.js';
 	import TabNavigation from '@/components/custom/TabNavigation.svelte';
 	import MiddlePane from '../MiddlePane.svelte';
-	import tournamentQueries from '@/queries/tournaments.js';
-
-	type Tournament = InferSelectModel<typeof _tournaments>;
+	import { FormType } from '@/form.js';
+	import { tournamentMutations, tournamentQueries } from '@/queries/tournaments.js';
 
 	let { data, children } = $props();
-	let tournaments: Tournament[] = $state([]);
+	let tournaments: InferSelectModel<typeof _tournaments>[] = $state([]);
 	let error: string | null = null;
+	let refSearchInput: Input | undefined = $state();
 	let searchOpened = $state(false);
 	let searchValue = $state('');
 
-	const { getAll, useCreate } = tournamentQueries(data.queryClient);
-	const unsubGetAll = getAll.subscribe((res) => {
+	const { getAll } = tournamentQueries(data.queryClient);
+	const { useCreate } = tournamentMutations(data.queryClient);
+	const unsubGetAll = getAll().subscribe((res) => {
 		if (!res.data) return;
 		console.log('res.data', JSON.stringify(res.data, null, 4));
 		tournaments = res.data;
@@ -55,16 +45,34 @@
 		unsubGetAll();
 	});
 
-	async function onAddTournament() {
+	function toggleSearch() {
+		searchOpened = !searchOpened;
+		if (searchOpened) {
+			refSearchInput?.focus();
+		} else {
+			searchValue = '';
+		}
+	}
+
+	async function openCreate() {
 		error = null;
 		try {
-			const result = await get(useCreate).mutateAsync({
-				img: null,
-				name: 'New Tournament',
-				dateOfMatch: new Date()
+			let form = await createFormDialog(
+				FormType.Create,
+				'/dialogs/forms/tournament',
+				$LL.crud.create.createModel({
+					model: $LL.models[TableNames.Tournaments].general.label(1)
+				}),
+				{
+					img: null,
+					name: '',
+					dateOfMatch: new Date()
+				}
+			);
+			await get(useCreate).mutateAsync({
+				...form,
+				dateOfMatch: new Date(form.dateOfMatch)
 			});
-			console.log({ result });
-			tournaments = [...tournaments, result];
 		} catch (e) {
 			error = errorToString(e);
 		}
@@ -74,19 +82,22 @@
 <MiddlePane title={$LL.models.tournaments.general.label(9999)}>
 	{#snippet headerRight()}
 		<Button
+			variant="primary"
 			icon={icons.controls.add}
 			label={$LL.models[TableNames.Tournaments].general.label(9999)}
-			onclick={onAddTournament}
+			onclick={openCreate}
 		/>
 	{/snippet}
 	{#snippet subNavigation()}
 		{#if searchOpened}
 			<Input
+				bind:this={refSearchInput}
 				label={$LL.general.search()}
 				placeholder={$LL.routes.manage.tournaments.searchForTournament()}
 				bind:value={searchValue}
 				class="flex-1"
 				hideLabel
+				autofocus
 			/>
 		{:else}
 			<TabNavigation
@@ -107,11 +118,10 @@
 			<Tooltip.Trigger asChild let:builder>
 				<Button
 					builders={[builder]}
-					variant="default"
 					icon={searchOpened ? icons.controls.clear : icons.controls.search}
 					label={$LL.general.search()}
 					hideLabel
-					onclick={() => (searchOpened = !searchOpened)}
+					onclick={toggleSearch}
 				/>
 			</Tooltip.Trigger>
 			<Tooltip.Content side="bottom" class="">

@@ -1,22 +1,10 @@
 <script lang="ts">
-	import * as Resizable from '$lib/components/ui/resizable/index.js';
-	import { Separator } from '$lib/components/ui/select/index.js';
 	import { APP_NAME } from '$env/static/public';
 	import Icon from '@/components/custom/Icon.svelte';
 	import * as Tooltip from '$lib/components/ui/tooltip/index.js';
-	import { DateFormatter, getDayOfWeek, getLocalTimeZone, now } from '@internationalized/date';
-	import * as Avatar from '$lib/components/ui/avatar/index.js';
-	import { buttonVariants } from '$lib/components/ui/button/index.js';
 	import Button from '$lib/components/custom/Button.svelte';
-	import { Calendar } from '$lib/components/ui/calendar/index.js';
-	import * as DropdownMenu from '$lib/components/ui/dropdown-menu/index.js';
-	import { Label } from '$lib/components/ui/label/index.js';
-	import * as Popover from '$lib/components/ui/popover/index.js';
-	import { Switch } from '$lib/components/ui/switch/index.js';
-	import { Textarea } from '$lib/components/ui/textarea/index.js';
 	import time from '@/time';
 	import icons from '@/icons';
-	import { tournaments } from '@/database/schema';
 	import LL from '$i18n/i18n-svelte.js';
 	import {
 		listenReady,
@@ -26,48 +14,50 @@
 		setTimer
 	} from '../../../champion-select/index.js';
 	import { errorToString } from '@/error.js';
-	import { db } from '@/database/index.js';
 	import { tournaments as _tournaments, TableNames } from '$lib/database/schema';
 	import { createDeleteDialog, createFormDialog, createWindow } from '@/window.js';
-	import { eq, type InferSelectModel } from 'drizzle-orm';
 	import { FormType } from '@/form.js';
 	import { getAllWebviews } from '@tauri-apps/api/webview';
 	import type { WebviewWindow } from '@tauri-apps/api/webviewWindow';
-	import { onMount } from 'svelte';
-	import { invalidateAll } from '$app/navigation';
-	import { layoutSizes } from '../../index.js';
+	import { onDestroy } from 'svelte';
 	import RightPane from '../../RightPane.svelte';
-	import { app } from '@tauri-apps/api';
+	import { get } from 'svelte/store';
+	import type { InferSelectModel } from 'drizzle-orm';
+	import { tournamentQueries, tournamentMutations } from '@/queries/tournaments.js';
 
 	let { data } = $props();
+	let tournament: InferSelectModel<typeof _tournaments> | undefined = $state();
 	let error: string | null = null;
+	const { getById } = tournamentQueries(data.queryClient);
+	const { useUpdate, useDelete } = tournamentMutations(data.queryClient);
 
-	type Tournament = InferSelectModel<typeof _tournaments>;
+	const unsubGetById = getById(data.tournamentId).subscribe((res) => {
+		if (!res.data) return;
+		console.log('res.data', JSON.stringify(res.data, null, 4));
+		tournament = res.data;
+	});
+
 	const _windowLabel = 'championSelect';
 	let championSelect: WebviewWindow | undefined;
-	onMount(async () => {});
+
+	onDestroy(() => {
+		unsubGetById();
+	});
 
 	async function openEdit() {
 		error = null;
 		try {
-			const item = data.tournament.name;
 			const model = $LL.models[TableNames.Tournaments].general.label(1);
 			let updated = await createFormDialog(
 				FormType.Update,
 				'/dialogs/forms/tournament',
-				$LL.crud.edit.editModelItem({ model, item }),
-				data.tournament
+				$LL.crud.edit.editModel({ model }),
+				tournament
 			);
-			console.log('Updated', updated);
-			await db
-				.update(_tournaments)
-				.set({
-					...updated,
-					dateOfMatch: updated.dateOfMatch ? new Date(updated.dateOfMatch) : null
-				})
-				.where(eq(_tournaments.id, data.tournament.id));
-			console.log('Updated2', updated);
-			await invalidateAll();
+			await get(useUpdate).mutateAsync({
+				...updated,
+				dateOfMatch: updated.dateOfMatch ? new Date(updated.dateOfMatch) : null
+			});
 		} catch (e) {
 			error = errorToString(e);
 		}
@@ -75,8 +65,9 @@
 
 	async function askDelete() {
 		error = null;
+		if (!tournament) return;
 		try {
-			const item = data.tournament.name;
+			const item = tournament.name;
 			const model = $LL.models[TableNames.Tournaments].general.label(1);
 			const confirmed = await createDeleteDialog({
 				title: $LL.crud.delete.deleteModelItem({ model, item }),
@@ -88,7 +79,7 @@
 				deny: $LL.crud.delete.keep()
 			});
 			if (!confirmed) return;
-			await db.delete(_tournaments).where(eq(_tournaments.id, data.tournament.id));
+			await get(useDelete).mutateAsync(data.tournamentId);
 		} catch (e) {
 			error = errorToString(e);
 		}
@@ -116,11 +107,12 @@
 	}
 
 	async function playTournament() {
+		if (!tournament) return;
 		await waitForChampionSelectWindow();
 		await setBranding({
-			logo: data.tournament.img,
+			logo: tournament.img,
 			headline: data.settings?.orgName ?? APP_NAME,
-			subtitle: data.tournament.name
+			subtitle: tournament.name
 		});
 		await setTimer(60);
 		await setCurrentAction('Player 1 is picking');
@@ -151,7 +143,6 @@
 			<Tooltip.Trigger onclick={openEdit} asChild let:builder>
 				<Button
 					builders={[builder]}
-					variant="default"
 					icon={icons.controls.edit}
 					label={$LL.crud.edit.editModel({
 						model: $LL.models.tournaments.general.label(1)
@@ -170,7 +161,6 @@
 			<Tooltip.Trigger asChild let:builder>
 				<Button
 					builders={[builder]}
-					variant="default"
 					icon={icons.controls.delete}
 					label={$LL.crud.delete.deleteModel({
 						model: $LL.models.tournaments.general.label(1)
@@ -188,62 +178,65 @@
 	{/snippet}
 	{#snippet headerRight()}
 		<Button
+			variant="primary"
 			icon={icons.controls.play}
 			label={$LL.routes.manage.tournaments.play()}
 			onclick={playTournament}
 		/>
 	{/snippet}
 	{#snippet subHeader()}
-		{#if data.tournament}
+		{#if tournament}
 			<div class="flex items-center gap-4 text-sm">
-				{#if data.tournament.img}
-					<img src={data.tournament.img} alt={data.tournament.name} class="max-h-12 max-w-12" />
+				{#if tournament.img}
+					<img src={tournament.img} alt={tournament.name} class="max-h-12 max-w-12" />
 				{:else}
 					<div class="w-12 h-12 bg-foreground/5 rounded flex items-center justify-center">
 						<Icon name={icons.models.tournament} class="!text-2xl text-secondary" />
 					</div>
 				{/if}
 				<div class="grid gap-0.25">
-					<div class="text text-lg font-semibold">{data.tournament.name}</div>
-					<div class="text">ID: {data.tournament.id}</div>
+					<div class="text text-lg font-semibold">{tournament.name}</div>
+					<div class="text">ID: {tournament?.id}</div>
 				</div>
 			</div>
-			{#if data.tournament.dateOfMatch}
+			{#if tournament.dateOfMatch}
 				<div class="text-secondary ml-auto text-xs">
-					{$time(data.tournament.dateOfMatch.toUTCString()).fromNow()}<br />
-					({$time(data.tournament.dateOfMatch.toUTCString()).format($LL.general.formats.date())})
+					{$time(tournament.dateOfMatch.toUTCString()).fromNow()}<br />
+					({$time(tournament.dateOfMatch.toUTCString()).format($LL.general.formats.date())})
 				</div>
 			{/if}
 		{/if}
 	{/snippet}
 	{#snippet content()}
-		{#if data.tournament}
-			<div class="flex items-center">
-				{#each Array.from({ length: 3 }) as _, stage}
-					<div class="min-w-48">
-						{#each Array.from({ length: 3 - stage }) as _, game}
-							<div class="flex items-center space-x-2 p-4">
-								<h3 class="text text-lg leading-8">
-									{stage * (4 - stage) + (game + 1)}.
-								</h3>
-								<div class="space-y-2 flex-1">
-									{#each Array.from({ length: 2 }) as _, team}
-										<div class="flex gap-x-2 w-full items-center">
-											<div
-												class="w-8 h-8 flex-shrink-0 bg-foreground/5 rounded flex items-center justify-center"
-											>
-												<Icon name={icons.models.game} class="!text-xl text-secondary" />
+		<div class="flex flex-col gap-3">
+			{#if tournament}
+				<div class="flex items-center">
+					{#each Array.from({ length: 3 }) as _, stage}
+						<div class="min-w-48">
+							{#each Array.from({ length: 3 - stage }) as _, game}
+								<div class="flex items-center space-x-2 p-4">
+									<h3 class="text text-lg leading-8">
+										{stage * (4 - stage) + (game + 1)}.
+									</h3>
+									<div class="space-y-2 flex-1">
+										{#each Array.from({ length: 2 }) as _, team}
+											<div class="flex gap-x-2 w-full items-center">
+												<div
+													class="w-8 h-8 flex-shrink-0 bg-foreground/5 rounded flex items-center justify-center"
+												>
+													<Icon name={icons.models.game} class="!text-xl text-secondary" />
+												</div>
+												<h3 class="text text-lg leading-8 flex-1">Team {team + 1}</h3>
+												<p>0</p>
 											</div>
-											<h3 class="text text-lg leading-8 flex-1">Team {team + 1}</h3>
-											<p>0</p>
-										</div>
-									{/each}
+										{/each}
+									</div>
 								</div>
-							</div>
-						{/each}
-					</div>
-				{/each}
-			</div>
-		{/if}
+							{/each}
+						</div>
+					{/each}
+				</div>
+			{/if}
+		</div>
 	{/snippet}
 </RightPane>

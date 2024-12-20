@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Button from '@/components/ui/button/button.svelte';
+	import Button from '@/components/custom/Button.svelte';
 	import { emit, listen, type UnlistenFn } from '@tauri-apps/api/event';
 	import { getCurrentWindow } from '@tauri-apps/api/window';
 	import { onDestroy, onMount } from 'svelte';
@@ -7,7 +7,7 @@
 	import { tournaments } from '@/database/schema';
 	import LL from '$i18n/i18n-svelte';
 	import { z } from 'zod';
-	import type { FormDialog } from '@/form';
+	import { FormType, type FormDialog } from '@/form';
 	import * as Form from '$lib/components/ui/form';
 	import { Input } from '$lib/components/ui/input';
 	import { type SuperValidated, type Infer, superForm, superValidate } from 'sveltekit-superforms';
@@ -21,6 +21,7 @@
 	import ImageCropper from '@/components/custom/ImageCropper.svelte';
 
 	type Tournament = InferSelectModel<typeof tournaments>;
+	let type = FormType.Create;
 	let title = '';
 	let data: Tournament = {
 		id: 0,
@@ -44,6 +45,7 @@
 	let unlisten: UnlistenFn;
 	listen<FormDialog<Tournament>>('data', (event) => {
 		data = event.payload.data;
+		type = event.payload.type;
 		title = data.name;
 		formData.set(data);
 	});
@@ -62,10 +64,14 @@
 {#key form}
 	<form method="POST" use:enhance class="h-full flex flex-col p-6">
 		<h3 class="text-lg font-semibold">
-			{$LL.crud.edit.editModelItem({
-				model: $LL.models.tournaments.general.label(1),
-				item: title
-			})}
+			{type === FormType.Create
+				? $LL.crud.create.createNewModel({
+						model: $LL.models.tournaments.general.label(1)
+					})
+				: $LL.crud.edit.editModelItem({
+						model: $LL.models.tournaments.general.label(1),
+						item: title
+					})}
 		</h3>
 		<div class="grid grid-cols-3 gap-3 mt-3">
 			<Form.Field {form} name="img" class="col-span-3">
@@ -107,12 +113,21 @@
 			</Form.Field>
 		</div>
 		<div class="flex justify-end space-x-3 mt-auto">
-			<Button type="reset" onclick={discard} variant="secondary">
-				<span>{$LL.crud.edit.discard()}</span>
-			</Button>
-			<Button type="submit" onclick={submit}>
-				<span>{$LL.crud.edit.saveChanges()}</span>
-			</Button>
+			<Button
+				type="reset"
+				label={$LL.crud[type === FormType.Create ? 'create' : 'edit'].discard()}
+				onclick={discard}
+			/>
+			<Button
+				type="submit"
+				variant="primary"
+				label={type === FormType.Create
+					? $LL.crud.create.createModel({
+							model: $LL.models.tournaments.general.label(1)
+						})
+					: $LL.crud.edit.saveChanges()}
+				onclick={submit}
+			/>
 		</div>
 	</form>
 {/key}

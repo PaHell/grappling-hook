@@ -23,7 +23,7 @@
 		icon,
 		label,
 		hideLabel = false,
-		variant = 'primary',
+		variant = 'default',
 		size = 'default',
 		active = false,
 		class: classes,
